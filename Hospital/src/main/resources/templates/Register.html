@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>RegisterPage</title>
+
+    <link rel="stylesheet" type="text/css" href ="style.css"/>
+
+</head>
+<body>
+<div class="topnav">
+    <a href="/">Back</a>
+    <a href="/aut">Autorisation</a>
+    <h1 class="HeaderText">Hospital</h1>
+</div>
+<div class="contentreg">
+    <b>Email</b>
+    <input type="text" placeholder="Enter Email" id="email" autofocus>
+    <hr>
+    <b>Password</b>
+    <input type="password" placeholder="Enter Password" id="psw">
+    <hr>
+    <b>First name</b>
+    <input type="text" placeholder="First name" id="FirstName">
+    <hr>
+    <b>Last name</b>
+    <input type="text" placeholder="Last name" id="LastName">
+    <hr>
+    <button onclick="Send()">Submit</button>
+
+</div>
+<script type="text/javascript">
+    async function Send() {
+        let send={
+            email:document.getElementById('email').value,
+            password:document.getElementById('psw').value,
+            firstName:document.getElementById('FirstName').value,
+            lastName:document.getElementById('LastName').value
+        };
+        let response = await fetch('/api/v1/auth/Register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        document.getElementById("result").innerHTML = "";
+        if(response.status === 201)
+        {
+            document.getElementById("result").innerHTML = "You are successfully registered";
+          //  window.location.href = '/login';
+        }
+        else
+        {
+            data.errors.forEach(err =>
+            {
+             //   document.querySelector("#result" + err.field).className = "error";
+                document.getElementById("result").innerHTML=err.field+':'+err.message;
+            });
+        }
+    }
+
+
+</script>
+<div class="footer">
+    <div  id="result"></div>
+</div>
+</body>
+</html>
