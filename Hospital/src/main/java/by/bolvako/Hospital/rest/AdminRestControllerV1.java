@@ -24,8 +24,30 @@ public class AdminRestControllerV1 {
 
     @GetMapping(value = "users/{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
-        User user = userService.findById(id);
 
+        System.out.println("-------------------");
+        User user = userService.findById(id);
+        System.out.println(user.getId());
+        System.out.println(user.getEmail());
+        System.out.println(user.getRoles());
+        System.out.println("-------------------");
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        AdminUserDto result = AdminUserDto.fromUser(user);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @GetMapping(value = "page")
+    public ResponseEntity<AdminUserDto> gete(@PathVariable(name = "id") Long id) {
+
+        System.out.println("-------------------");
+        User user = userService.findById(id);
+        System.out.println(user.getId());
+        System.out.println(user.getEmail());
+        System.out.println(user.getRoles());
+        System.out.println("-------------------");
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

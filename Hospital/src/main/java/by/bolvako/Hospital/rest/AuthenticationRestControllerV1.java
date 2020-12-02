@@ -3,8 +3,10 @@ package by.bolvako.Hospital.rest;
 import by.bolvako.Hospital.Exceptions.UsersValidationException;
 import by.bolvako.Hospital.dto.AuthenticationRequestDto;
 import by.bolvako.Hospital.dto.UserDto;
+import by.bolvako.Hospital.model.Role;
 import by.bolvako.Hospital.model.User;
 import by.bolvako.Hospital.security.jwt.JwtTokenProvider;
+import by.bolvako.Hospital.service.RoleService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.validator.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +36,20 @@ public class AuthenticationRestControllerV1 {
     private final JwtTokenProvider jwtTokenProvider;
    private final EmailValidator emailValidator;
     private final UserService userService;
+    private final RoleService roleService;
     @Autowired
     public AuthenticationRestControllerV1(AuthenticationManager authenticationManager,
                                           JwtTokenProvider jwtTokenProvider, EmailValidator emailValidator,
-                                          UserService userService) {
+                                          UserService userService, RoleService roleService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.emailValidator = emailValidator;
         this.userService = userService;
+        this.roleService = roleService;
     }
+
+
+
 
 
 
@@ -72,16 +79,18 @@ public class AuthenticationRestControllerV1 {
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
         String username = requestDto.getEmail();
-        System.out.println(username+'|'+requestDto.getPassword()+'|'+requestDto.toString());
+        roleService.findByName(username);
+     //   System.out.println(username+'|'+requestDto.getPassword()+'|'+requestDto.toString());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
         User user = userService.findByEmail(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
-
+      //  System.out.println(user.getId());
         String token = jwtTokenProvider.createToken(username, user.getRoles());
-        System.out.println(token);
+     //   System.out.println(token);
+
         Map<Object, Object> response = new HashMap<>();
         response.put("email", username);
         response.put("token", token);

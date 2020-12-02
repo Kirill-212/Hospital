@@ -23,7 +23,12 @@ public class UserRestControllerV1 {
 
     @GetMapping(value = "{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id){
+        System.out.println("-------user------------");
         User user = userService.findById(id);
+        System.out.println(user.getId());
+        System.out.println(user.getEmail());
+        System.out.println(user.getRoles());
+        System.out.println("-------------------");
 
         if(user == null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
