@@ -1,0 +1,149 @@
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AddPtient</title>
+
+    <link rel="stylesheet" type="text/css" href ="style.css"/>
+
+</head>
+<body>
+
+<div class="topnav">
+    <a href="/reg">Register</a>
+    <a href="/aut">Autorisation</a>
+    <a href="/" >Main</a>
+    <a href="/admin">Back</a>
+    <h1 class="HeaderText">Hospital</h1>
+</div>
+<div class="contentreg">
+    <b>id User</b>
+    <input type="text" placeholder="id User" id="id" autofocus>
+    <hr>
+    <b>Home adress</b>
+    <input type="text" placeholder="Home adress" id="Home_adress">
+    <hr>
+    <b>Passport</b>
+    <input type="text" placeholder="Passport" id="Passport">
+    <hr>
+
+    <button onclick="Send()">Submit</button>
+    <b>Del for id Patient</b>
+    <input type="text" placeholder="input id patient" id="id_del">
+    <hr>
+    <button onclick="Del()">Submit</button>
+    <hr>
+    <hr>
+    <b>id Patient</b>
+    <input type="text" placeholder="id patient" id="id_patient" >
+    <hr>
+    <b> new Home adress</b>
+    <input type="text" placeholder="Home adress" id="Home_adress_patient">
+    <hr>
+    <b>new Passport</b>
+    <input type="text" placeholder="Passport" id="Passport_patient">
+    <hr>
+    <button onclick="Update()">Submit</button>
+</div>
+<script type="text/javascript">
+    async function Update() {
+        document.getElementById("result_for_update").innerHTML="";
+        let send={
+            id:document.getElementById('id_patient').value,
+            passport:document.getElementById('Passport_patient').value,
+            homeadress:document.getElementById('Home_adress_patient').value,
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/admin/updatePatient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        document.getElementById("result_for_update").innerHTML = "";
+        if(response.status === 201)
+        {
+            document.getElementById("result_for_update").innerHTML = "You are successfully update";
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            data.errors.forEach(err =>
+            {
+                //   document.querySelector("#result" + err.field).className = "error";
+                document.getElementById("result_for_update").innerHTML=err.field+':'+err.message;
+            });
+        }
+    }
+    async function Del() {
+        document.getElementById("result_for_delete").innerHTML="";
+        let send={
+            id:document.getElementById('id_del').value
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/admin/delPatient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        document.getElementById("result_for_delete").innerHTML = "";
+        if(response.status === 201)
+        {
+            document.getElementById("result_for_delete").innerHTML = "You are successfully delete";
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            data.errors.forEach(err =>
+            {
+                //   document.querySelector("#result" + err.field).className = "error";
+                document.getElementById("result_for_delete").innerHTML=err.field+':'+err.message;
+            });
+        }
+    }
+    async function Send() {
+        let send={
+            id:document.getElementById('id').value,
+            passport:document.getElementById('Passport').value,
+            homeadress:document.getElementById('Home_adress').value,
+
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/admin/addPatient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        document.getElementById("result").innerHTML = "";
+        if(response.status === 201)
+        {
+            document.getElementById("result").innerHTML = "You are successfully add";
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            data.errors.forEach(err =>
+            {
+                //   document.querySelector("#result" + err.field).className = "error";
+                document.getElementById("result").innerHTML=err.field+':'+err.message;
+            });
+        }
+    }
+
+
+</script>
+<div class="footer">
+    <div  id="result"></div>
+    <div  id="result_for_delete"></div>
+    <div  id="result_for_update"></div>
+</div>
+</body>
+</html>

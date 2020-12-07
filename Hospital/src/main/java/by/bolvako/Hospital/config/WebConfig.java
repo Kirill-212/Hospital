@@ -45,5 +45,8 @@ public BCryptPasswordEncoder passwordEncoder() {
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/reg").setViewName("Register");
         registry.addViewController("/aut").setViewName("Autorisation");
+        registry.addViewController("/admin").setViewName("Admin");
+        registry.addViewController("/admin/admin/addDoctor").setViewName("Doctor");
+        registry.addViewController("/admin/admin/addPatient").setViewName("Patient");
     }
 }

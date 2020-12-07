@@ -8,10 +8,12 @@
 
 </head>
 <body>
+
 <div class="topnav">
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
-    <a href="#">Link</a>
+    <a href="/" >Main</a>
+    <a href="/" onclick="LogOut()">LogOut</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 
@@ -22,6 +24,22 @@
 
 <div class="footer">
     <p>Footer</p>
+    <div id="admin1"> </div>
 </div>
+<script type="text/javascript">
+    function LogOut(){
+        localStorage.setItem('token', 0);
+        localStorage.setItem('email', 0);
+        localStorage.setItem('Role_id',0);
+        localStorage.setItem('User_id',0);
+    }
+    console.log(localStorage.getItem('Role_id'));
+    if(localStorage.getItem('Role_id')==="2"){
+        document.getElementById("admin1").innerHTML="<a href='/admin'>admin</a>";
+    }
+    else{
+        document.getElementById("admin1").innerHTML="";
+    }
+</script>
 </body>
 </html>

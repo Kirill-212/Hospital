@@ -44,7 +44,11 @@ console.log(password);
            // console.log(data);
             localStorage.setItem('token', data.token);
             localStorage.setItem('email', data.email);
+            localStorage.setItem('Role_id',data.ROLE);
+            localStorage.setItem('User_id',data.USER_ID);
+            console.log(localStorage.getItem('User_id'));
             console.log(localStorage.getItem('token'));
+            console.log(localStorage.getItem('Role_id'));
             document.getElementById("result_for_login").innerHTML = "You are successfully autorisation";
 
         }

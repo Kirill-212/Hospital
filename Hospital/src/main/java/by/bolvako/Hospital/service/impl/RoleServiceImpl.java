@@ -21,9 +21,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role findByName(String name) {
       Role tl=roleRepository.findRolesById(2L);
-        System.out.println(tl.getId()+'|');
-
-        System.out.println(tl.toString()+'|');
+//        System.out.println(tl.getId()+'|');
+//
+//        System.out.println(tl.toString()+'|');
         Role roleUser = roleRepository.findByName("ROLE_USER");
 //        System.out.println(roleUser.getName());
 //        System.out.println(roleUser.getUsers());

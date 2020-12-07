@@ -5,6 +5,8 @@ import by.bolvako.Hospital.dto.AuthenticationRequestDto;
 import by.bolvako.Hospital.dto.UserDto;
 import by.bolvako.Hospital.model.Role;
 import by.bolvako.Hospital.model.User;
+import by.bolvako.Hospital.repository.RoleRepository;
+import by.bolvako.Hospital.repository.UserRepository;
 import by.bolvako.Hospital.security.jwt.JwtTokenProvider;
 import by.bolvako.Hospital.service.RoleService;
 import by.bolvako.Hospital.service.UserService;
@@ -83,18 +85,21 @@ public class AuthenticationRestControllerV1 {
      //   System.out.println(username+'|'+requestDto.getPassword()+'|'+requestDto.toString());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
         User user = userService.findByEmail(username);
-
+       // User user1 = userService.getRoleForId();
+       // System.out.println(user.getRoles()+"|login");
         if (user == null) {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
-      //  System.out.println(user.getId());
+        System.out.println(user.getId()+" login");
+
         String token = jwtTokenProvider.createToken(username, user.getRoles());
      //   System.out.println(token);
 
         Map<Object, Object> response = new HashMap<>();
         response.put("email", username);
         response.put("token", token);
-
+        response.put("ROLE",user.getRoles().get(0).getId());
+        response.put("USER_ID",user.getId());
         return ResponseEntity.ok(response);
     }
 }

@@ -17,6 +17,20 @@ public class Doctor {
     @Column(name = "Passport")
     private String Passport;
 
+    public Doctor() {
+    }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "id=" + id +
+                ", user=" + user +
+                ", specialty='" + specialty + '\'' +
+                ", Name_Hospital='" + Name_Hospital + '\'' +
+                ", Passport='" + Passport + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

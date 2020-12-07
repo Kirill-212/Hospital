@@ -42,5 +42,6 @@ public class Role extends BaseEntity {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
 }
 
