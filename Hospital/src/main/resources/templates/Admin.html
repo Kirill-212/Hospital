@@ -6,63 +6,11 @@
     <link rel="stylesheet" type="text/css" href ="style.css"/>
 </head>
 <body>
-<input type="text" placeholder="Enter id" id="id_user">
+<input type="text" placeholder="Input id" id="id_user">
 <hr>
-<button onclick="Del()">Submit</button>
-<script type="text/javascript">
-    Send();
-    async function Send() {
+<button onclick="Del()">Delete</button>
+<button onclick="Send()">Refresh</button>
 
-        let response = await fetch("/api/v1/admin/admin",
-            {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-                body: JSON.stringify({
-                    User_id:  localStorage.getItem('User_id'),
-                    Role_id: localStorage.getItem('Role_id')
-                })
-            });
-        let data = await response.json();
-        document.getElementById("result_for_login").innerHTML = "";
-        if(response.status === 200)
-        {
-            console.log(data.users);
-            console.log(localStorage.getItem('token'));
-            console.log(localStorage.getItem('Role_id'));
-            document.getElementById("result_for_login").innerHTML =data.users;
-            document.getElementById("admin_aut").innerHTML="<a href='/admin/admin/addDoctor'>Add Doctor</a>"
-                +"<a href='/admin/admin/addPatient'>Add Patient</a>"
-        }
-        else
-        {
-            document.getElementById("result_for_login").innerHTML="error";
-        }
-    }
-    async function Del() {
-        document.getElementById("result_for_delete").innerHTML="";
-        let response = await fetch('/api/v1/admin/delUser/'+document.getElementById("id_user").innerHTML, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json', 'Accept': 'application/json'
-            }
-        });
-        let data = await response.json();
-        console.log(data);
-        document.getElementById("result_for_delete").innerHTML = "";
-        if(response.status === 201)
-        {
-            document.getElementById("result_for_delete").innerHTML = "You are successfully delete";
-        }
-        else
-        {
-            data.errors.forEach(err =>
-            {
-                //   document.querySelector("#result" + err.field).className = "error";
-                document.getElementById("result_for_delete").innerHTML=err.field+':'+err.message;
-            });
-        }
-    }
-</script>
 <div class="topnav">
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
@@ -81,5 +29,56 @@
     <p>Footer</p>
 
 </div>
+<script type="text/javascript">
+    Send();
+    async function Send() {
+        document.getElementById('result_for_delete').innerHTML="";
+        let response = await fetch("/api/v1/admin/admin",
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                body: JSON.stringify({
+                    User_id:  localStorage.getItem('User_id'),
+                    Role_id: localStorage.getItem('Role_id')
+                })
+            });
+        let data = await response.json();
+        document.getElementById('result_for_login').innerHTML = "";
+        if(response.status === 200)
+        {
+            console.log(data.users);
+            console.log(localStorage.getItem('token'));
+            console.log(localStorage.getItem('Role_id'));
+            document.getElementById('result_for_login').innerHTML =data.users;
+            document.getElementById('admin_aut').innerHTML="<a href='/admin/admin/addDoctor'>Add Doctor</a>"
+                +"<a href='/admin/admin/addPatient'>Add Patient</a>"
+        }
+        else
+        {
+            document.getElementById('result_for_login').innerHTML="error";
+        }
+    }
+    async function Del() {
+        document.getElementById('result_for_delete').innerHTML="";
+        let response = await fetch('/api/v1/admin/delUser/'+document.getElementById('id_user').value, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            }
+        });
+        let data = await response.json();
+        if(response.status === 200)
+        {
+            document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError;
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            document.getElementById('result_for_delete').innerHTML= "Delete:"+data.userError+"<br>";
+
+        }
+        document.getElementById('id_user').value="";
+    }
+</script>
 </body>
 </html>

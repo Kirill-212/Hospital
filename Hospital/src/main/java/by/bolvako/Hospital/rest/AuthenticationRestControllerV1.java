@@ -58,25 +58,28 @@ public class AuthenticationRestControllerV1 {
     @PostMapping("Register")
     public ResponseEntity Regiser(@Valid @RequestBody UserDto requestDto, BindingResult errors) {
         emailValidator.validate(requestDto,errors);
-//        if(errors.hasErrors()){
-//            System.out.println(errors.getAllErrors());
-//            System.out.println(errors.getTarget());
-//            //System.out.println(errors.);
-//            throw  new RuntimeException();
-//        }
 
+        Map<Object, Object> response = new HashMap<>();
         if(errors.hasErrors()){
             throw new UsersValidationException(errors);
         }
-        User user=requestDto.toUser();
-        userService.register(user);
+        User user = requestDto.toUser();
+        try {
+
+            System.out.println(userService.findByEmail(user.getEmail()).getId());
+            response.put("username", "User for this email found");
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+        }catch (Exception e){
+            userService.register(user);
+            response.put("username", "user register successfully");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
 
 
-        Map<Object, Object> response = new HashMap<>();
-        response.put("username", "username");
 
 
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+
+
     }
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {

@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(userRoles);
-        user.setStatus(Status.ACTIVE);
+        user.setStatus(Status.NOT_ACTIVE);
 
         User registeredUser = userRepository.save(user);
 

@@ -38,7 +38,7 @@ console.log(password);
                 })
             });
         let data = await response.json();
-        document.getElementById("result_for_login").innerHTML = "";
+        document.getElementById('result_for_login').innerHTML = "";
         if(response.status === 200)
         {
            // console.log(data);
@@ -49,12 +49,12 @@ console.log(password);
             console.log(localStorage.getItem('User_id'));
             console.log(localStorage.getItem('token'));
             console.log(localStorage.getItem('Role_id'));
-            document.getElementById("result_for_login").innerHTML = "You are successfully autorisation";
+            document.getElementById('result_for_login').innerHTML = "You are successfully autorisation";
 
         }
         else
         {
-            document.getElementById("result_for_login").innerHTML=data.error;
+            document.getElementById('result_for_login').innerHTML=data.error;
         }
     }
 

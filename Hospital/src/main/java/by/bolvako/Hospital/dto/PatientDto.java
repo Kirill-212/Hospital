@@ -6,12 +6,15 @@ import by.bolvako.Hospital.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientDto {
     @NotNull(message = "id cannot be null")
     private  Long id;
     @NotNull(message = "Home adress cannot be null")
     private String Homeadress;
+    @Size(min = 7, max = 8, message = "The Passport must be equal or greater than 7 characters and less than 8 characters")
     @NotNull(message = "Passport cannot be null")
     private String Passport;
 

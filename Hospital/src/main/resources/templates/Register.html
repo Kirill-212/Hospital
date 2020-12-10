@@ -15,17 +15,17 @@
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
-    <b>Email</b>
-    <input type="text" placeholder="Enter Email" id="email" autofocus>
+    <b>Email:</b>
+    <input type="text" placeholder="Input email" id="email" autofocus>
     <hr>
-    <b>Password</b>
-    <input type="password" placeholder="Enter Password" id="psw">
+    <b>Password:</b>
+    <input type="password" placeholder="Input password" id="psw">
     <hr>
-    <b>First name</b>
-    <input type="text" placeholder="First name" id="FirstName">
+    <b>First name:</b>
+    <input type="text" placeholder="Input first name" id="FirstName">
     <hr>
-    <b>Last name</b>
-    <input type="text" placeholder="Last name" id="LastName">
+    <b>Last name:</b>
+    <input type="text" placeholder="Input last name" id="LastName">
     <hr>
     <button onclick="Send()">Submit</button>
 
@@ -46,20 +46,29 @@
             body: JSON.stringify(send)
         });
         let data = await response.json();
-        document.getElementById("result").innerHTML = "";
+        document.getElementById('result').innerHTML = "";
         if(response.status === 201)
         {
-            document.getElementById("result").innerHTML = "You are successfully registered";
-          //  window.location.href = '/login';
+            document.getElementById('result').innerHTML = data.username;
+            //  window.location.href = '/login';
         }
         else
         {
-            data.errors.forEach(err =>
-            {
-             //   document.querySelector("#result" + err.field).className = "error";
-                document.getElementById("result").innerHTML=err.field+':'+err.message;
-            });
+            if(typeof  data.username != "undefined"){
+                document.getElementById('result').innerHTML = "Error:"+data.username+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {
+                    document.getElementById('result').innerHTML= "Error:";
+                    document.getElementById('result').innerHTML+=err.field+':'+err.message;
+                });
+            }
         }
+        document.getElementById('email').value="";
+        document.getElementById('psw').value="";
+        document.getElementById('FirstName').value="";
+        document.getElementById('LastName').value="";
     }
 
 

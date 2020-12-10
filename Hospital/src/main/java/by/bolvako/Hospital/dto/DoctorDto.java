@@ -17,7 +17,7 @@ public class DoctorDto {
     @NotNull(message = "specialty cannot be null")
     private String specialty;
 
-    @Size(min = 7, max = 8, message = "The Passport must be equal or greater than 8 characters and less than 16 characters")
+    @Size(min = 7, max = 8, message = "The Passport must be equal or greater than 7 characters and less than 8 characters")
     @NotNull(message = "Passport cannot be null")
     private  String Passport;
 

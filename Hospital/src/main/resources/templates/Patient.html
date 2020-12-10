@@ -1,10 +1,10 @@
-
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>AddPtient</title>
+    <title>Patient</title>
 
-    <link rel="stylesheet" type="text/css" href ="style.css"/>
+    <link rel="stylesheet" type="text/css" href ="http://localhost:8075/style.css"/>
 
 </head>
 <body>
@@ -17,37 +17,77 @@
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
-    <b>id User</b>
-    <input type="text" placeholder="id User" id="id" autofocus>
+    <button onclick="getAll()">refresh</button>
     <hr>
-    <b>Home adress</b>
-    <input type="text" placeholder="Home adress" id="Home_adress">
+    <b>Id user:</b>
+    <input type="text" placeholder="Input id user" id="id" >
     <hr>
-    <b>Passport</b>
-    <input type="text" placeholder="Passport" id="Passport">
+    <b>Home address:</b>
+    <input type="text" placeholder="Input home address" id="Home_adress">
+    <hr>
+    <b>Passport:</b>
+    <input type="text" placeholder="Input passport" id="Passport">
     <hr>
 
-    <button onclick="Send()">Submit</button>
-    <b>Del for id Patient</b>
-    <input type="text" placeholder="input id patient" id="id_del">
+    <button onclick="Send()">Add patient</button>
     <hr>
-    <button onclick="Del()">Submit</button>
+    <b>Del for id Patient:</b>
+    <input type="text" placeholder="Input id patient" id="id_del">
+    <hr>
+    <button onclick="Del()">Delete</button>
     <hr>
     <hr>
-    <b>id Patient</b>
-    <input type="text" placeholder="id patient" id="id_patient" >
+    <b>Id Patient:</b>
+    <input type="text" placeholder="Input id patient" id="id_patient" >
     <hr>
-    <b> new Home adress</b>
-    <input type="text" placeholder="Home adress" id="Home_adress_patient">
+    <b>New home address:</b>
+    <input type="text" placeholder="Input home address" id="Home_adress_patient">
     <hr>
-    <b>new Passport</b>
-    <input type="text" placeholder="Passport" id="Passport_patient">
+    <b>New passport:</b>
+    <input type="text" placeholder="Input new passport" id="Passport_patient">
     <hr>
-    <button onclick="Update()">Submit</button>
+    <button onclick="Update()">Update patient</button>
+</div>
+
+<div class="footer">
+    <div  id="result"> </div>
+    <div  id="result_for_delete"> </div>
+    <div  id="result_for_update"> </div>
+    <div  id="result_for_login"> </div>
 </div>
 <script type="text/javascript">
+    getAll();
+    async function getAll() {
+        document.getElementById('result_for_delete').innerHTML="";
+        document.getElementById('result_for_update').innerHTML="";
+        document.getElementById('result_for_update').innerHTML="";
+        document.getElementById('result').innerHTML = "";
+        let response = await fetch("/api/v1/admin/patient",
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                body: JSON.stringify({
+                    User_id:  localStorage.getItem('User_id'),
+                    Role_id: localStorage.getItem('Role_id')
+                })
+            });
+        let data = await response.json();
+        document.getElementById("result_for_login").innerHTML = "";
+        if(response.status === 200)
+        {document.getElementById("result_for_login").innerHTML = "";
+            console.log(data.users);
+            console.log(localStorage.getItem('token'));
+            console.log(localStorage.getItem('Role_id'));
+            document.getElementById("result_for_login").innerHTML =data.patients;
+        }
+        else
+        {
+            document.getElementById("result_for_login").innerHTML="Get:error";
+        }
+    }
+
     async function Update() {
-        document.getElementById("result_for_update").innerHTML="";
+        document.getElementById('result_for_update').innerHTML="";
         let send={
             id:document.getElementById('id_patient').value,
             passport:document.getElementById('Passport_patient').value,
@@ -61,24 +101,33 @@
             },
             body: JSON.stringify(send)
         });
-        let data = await response.json();
-        document.getElementById("result_for_update").innerHTML = "";
-        if(response.status === 201)
+         let data = await response.json();
+        if(response.status === 200)
         {
-            document.getElementById("result_for_update").innerHTML = "You are successfully update";
+                document.getElementById('result_for_update').innerHTML ="Update:"+ data.userError;
             //  window.location.href = '/login';
         }
         else
         {
-            data.errors.forEach(err =>
-            {
-                //   document.querySelector("#result" + err.field).className = "error";
-                document.getElementById("result_for_update").innerHTML=err.field+':'+err.message;
-            });
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result_for_update').innerHTML = "Update:"+data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {
+                    document.getElementById('result_for_update').innerHTML= "Update:";
+                    document.getElementById('result_for_update').innerHTML+=err.field+':'+err.message;
+                });
+            }
+
         }
+        document.getElementById('id_patient').value="";
+        document.getElementById('Passport_patient').value="";
+        document.getElementById('Home_adress_patient').value="";
     }
     async function Del() {
-        document.getElementById("result_for_delete").innerHTML="";
+
+        document.getElementById('result_for_delete').innerHTML="";
         let send={
             id:document.getElementById('id_del').value
         };
@@ -91,27 +140,33 @@
             body: JSON.stringify(send)
         });
         let data = await response.json();
-        document.getElementById("result_for_delete").innerHTML = "";
-        if(response.status === 201)
+        if(response.status === 200)
         {
-            document.getElementById("result_for_delete").innerHTML = "You are successfully delete";
+            document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError;
             //  window.location.href = '/login';
         }
         else
         {
-            data.errors.forEach(err =>
-            {
-                //   document.querySelector("#result" + err.field).className = "error";
-                document.getElementById("result_for_delete").innerHTML=err.field+':'+err.message;
-            });
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {
+                    document.getElementById('result_for_delete').innerHTML="Delete:";
+                    document.getElementById('result_for_delete').innerHTML+=err.field+':'+err.message+"<br>";
+                });
+            }
+
         }
+        document.getElementById('id_del').value="";
     }
     async function Send() {
+        document.getElementById('result').innerHTML = "";
         let send={
             id:document.getElementById('id').value,
             passport:document.getElementById('Passport').value,
             homeadress:document.getElementById('Home_adress').value,
-
         };
         console.log(send);
         let response = await fetch('/api/v1/admin/addPatient', {
@@ -122,28 +177,29 @@
             body: JSON.stringify(send)
         });
         let data = await response.json();
-        document.getElementById("result").innerHTML = "";
         if(response.status === 201)
         {
-            document.getElementById("result").innerHTML = "You are successfully add";
+            document.getElementById('result').innerHTML ="Add:"+ data.userError;
             //  window.location.href = '/login';
         }
         else
         {
-            data.errors.forEach(err =>
-            {
-                //   document.querySelector("#result" + err.field).className = "error";
-                document.getElementById("result").innerHTML=err.field+':'+err.message;
-            });
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result').innerHTML ="Add:"+ data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {document.getElementById('result').innerHTML="Add:";
+                    document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";
+                });
+            }
         }
+        document.getElementById('id').value="";
+        document.getElementById('Passport').value="";
+        document.getElementById('Home_adress').value="";
     }
 
 
 </script>
-<div class="footer">
-    <div  id="result"></div>
-    <div  id="result_for_delete"></div>
-    <div  id="result_for_update"></div>
-</div>
 </body>
 </html>
