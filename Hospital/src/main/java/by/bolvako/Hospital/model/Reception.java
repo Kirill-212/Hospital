@@ -8,10 +8,10 @@ public class Reception {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne( cascade = CascadeType.ALL, orphanRemoval =
+    @OneToOne( cascade =  CascadeType.ALL, orphanRemoval =
             true)
     private Doctor doctor;
-    @OneToOne( cascade = CascadeType.ALL, orphanRemoval =
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval =
             true)
     private Patient patient;
     @Column(name = "time")
