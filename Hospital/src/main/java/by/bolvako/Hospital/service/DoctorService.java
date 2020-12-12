@@ -11,6 +11,7 @@ public interface DoctorService {
     List<Doctor> getAll();
     Boolean GetUserInDoctor(User user);
     Doctor findById(Long id);
+    Long findbyUser(User user);
     Long getRoleForId(Long id);
     void delete(Long id);
     void Update(Doctor doctor);

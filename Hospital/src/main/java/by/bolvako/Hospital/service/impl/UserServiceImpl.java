@@ -55,6 +55,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> GetByFandL(String f, String l) {
+        List<User> users=userRepository.findByFirstNameAndLastName(f,l);
+        if(users.size()>0){
+            return  users;
+        }
+        return null;
+    }
+
+    @Override
     public User findByEmail(String username) {
         //System.out.println(username);
         User result = userRepository.findByEmail(username);

@@ -43,6 +43,8 @@ public BCryptPasswordEncoder passwordEncoder() {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
+        registry.addViewController("/patient").setViewName("Patient");
+        registry.addViewController("/doctor").setViewName("Doctor");
         registry.addViewController("/reg").setViewName("Register");
         registry.addViewController("/aut").setViewName("Autorisation");
         registry.addViewController("/admin").setViewName("Admin");

@@ -18,94 +18,65 @@
 </div>
 <div class="contentreg">
     <button onclick="getAll()">refresh</button>
+    <b>Id reception:</b>
+    <input type="text" placeholder="Input id reception" id="id_reception">
     <hr>
-    <b>Id user:</b>
-    <input type="text" placeholder="Input id user" id="id" >
+    <b>Diagnosis:</b>
+    <input type="text" placeholder="Input diagnosis" id="diagnosis_reception">
     <hr>
-    <b>Name hospital:</b>
-    <input type="text" placeholder="Input name hospital" id="name_hospital">
-    <hr>
-    <b>Passport:</b>
-    <input type="text" placeholder="Input passport" id="Passport">
-    <hr>
-    <b>Specialty:</b>
-    <input type="text" placeholder="Input specialty" id="Specialty">
-    <hr>
-    <button onclick="Send()">Add doctor</button>
-    <hr>
-    <hr>
-    <hr>
-    <b>Del for id Doctor:</b>
-    <input type="text" placeholder="Input id doctor" id="id_del">
-    <hr>
-    <button onclick="Del()">Delete</button>
-    <hr>
-    <hr>
-    <b>Id doctor:</b>
-    <input type="text" placeholder="Input id doctor" id="id_doctor">
-    <hr>
-    <b>New name hospital:</b>
-    <input type="text" placeholder="Input name hospital" id="name_hospital_doctor">
-    <hr>
-    <b>New Passport:</b>
-    <input type="text" placeholder="Input passport" id="Passport_doctor">
-    <hr>
-    <b>New specialty:</b>
-    <input type="text" placeholder="Input specialty" id="Specialty_doctor">
+    <b>Comments:</b>
+    <input type="text" placeholder="Input comments" id="comments_reception">
     <hr>
     <button onclick="Update()">Update</button>
     <hr>
     <hr>
     <hr>
+    <b>First name:</b>
+    <input type="text" placeholder="Input First name" id="first_name">
+    <hr>
+    <b>Last name:</b>
+    <input type="text" placeholder="Input Last name" id="last_name">
+    <hr>
+    <button onclick="Search()">Search</button>
     <hr>
     <hr>
-    <div  id="result_for_login_doctor"> </div>
+    <div  id="result_for_login_doctor_view_all_reception"> </div>
 </div>
 
 <div class="footer">
-    <div  id="result_doctor"> </div>
-    <div  id="result_for_delete_doctor"> </div>
-    <div  id="result_for_update_doctor"> </div>
-
+    <div  id="result_for_update_doctor_reception"> </div>
+    <div  id="result_for_search_doctor_reception"> </div>
 </div>
 <script type="text/javascript">
     getAll();
     async function getAll() {
-        document.getElementById('result_for_delete_doctor').innerHTML="";
-        document.getElementById('result_for_update_doctor').innerHTML="";
-        document.getElementById('result_for_login_doctor').innerHTML="";
-        document.getElementById('result_doctor').innerHTML = "";
-        let response = await fetch("/api/v1/admin/doctor",
+        document.getElementById('result_for_login_doctor_view_all_reception').innerHTML="";
+        document.getElementById('result_for_update_doctor_reception').innerHTML="";
+        let response = await fetch("/api/v1/users/doctor/"+localStorage.getItem('id_doc'),
             {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-                body: JSON.stringify({
-                    User_id:  localStorage.getItem('User_id'),
-                    Role_id: localStorage.getItem('Role_id')
-                })
+                method: 'GET',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
             });
         let data = await response.json();
+        document.getElementById('result_for_login_doctor_view_all_reception').innerHTML = "";
         if(response.status === 200)
         {
-            console.log(localStorage.getItem('token'));
-            console.log(localStorage.getItem('Role_id'));
-            document.getElementById('result_for_login_doctor').innerHTML =data.doctor;
+            document.getElementById('result_for_login_doctor_view_all_reception').innerHTML =data.reception;
         }
         else
         {
-            document.getElementById('result_for_login_doctor').innerHTML="Get:error";
+            document.getElementById('result_for_login_doctor_view_all_reception').innerHTML="Get:error";
         }
     }
     async function Update() {
-        document.getElementById('result_for_update_doctor').innerHTML="";
+        document.getElementById('result_for_update_doctor_reception').innerHTML="";
         let send={
-            id:document.getElementById('id_doctor').value,
-            passport:document.getElementById('Passport_doctor').value,
-            name_Hospital:document.getElementById('name_hospital_doctor').value,
-            specialty:document.getElementById('Specialty_doctor').value
+            id:document.getElementById('id_reception').value,
+            diagnosis:document.getElementById('diagnosis_reception').value,
+            comments:document.getElementById('comments_reception').value
         };
         console.log(send);
-        let response = await fetch('/api/v1/admin/updateDoctor', {
+        let response = await fetch('/api/v1/users/updateReception', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 'Accept': 'application/json'
@@ -115,74 +86,36 @@
         let data = await response.json();
         if(response.status === 200)
         {
-            document.getElementById('result_for_update_doctor').innerHTML ="Update:"+ data.userError;
+            document.getElementById('result_for_update_doctor_reception').innerHTML ="Update:"+ data.userError;
             //  window.location.href = '/login';
         }
         else
         {
             if(typeof  data.userError != "undefined"){
-                document.getElementById('result_for_update_doctor').innerHTML = "Update:"+data.userError+"<br>";
+                document.getElementById('result_for_update_doctor_reception').innerHTML = "Update:"+data.userError+"<br>";
             }
             else{
                 data.errors.forEach(err =>
                 {
-                    document.getElementById('result_for_update_doctor').innerHTML= "Update:";
-                    document.getElementById('result_for_update_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_for_update_doctor_reception').innerHTML= "Update:";
+                    document.getElementById('result_for_update_doctor_reception').innerHTML+=err.field+':'+err.message;
                 });
             }
 
         }
-        document.getElementById('id_doctor').value="";
-        document.getElementById('Passport_doctor').value="";
-        document.getElementById('name_hospital_doctor').value="";
-        document.getElementById('Specialty_doctor').value="";
-    }
-    async function Del() {
-        document.getElementById('result_for_delete_doctor').innerHTML="";
-        let send={
-            id:document.getElementById('id_del').value
-        };
-        console.log(send);
-        let response = await fetch('/api/v1/admin/delDoctor', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', 'Accept': 'application/json'
-            },
-            body: JSON.stringify(send)
-        });
-        let data = await response.json();
-        if(response.status === 200)
-        {
-            document.getElementById('result_for_delete_doctor').innerHTML ="Del:"+ data.userError;
-            //  window.location.href = '/login';
-        }
-        else
-        {
-            if(typeof  data.userError != "undefined"){
-                document.getElementById('result_for_delete_doctor').innerHTML = "Del:"+data.userError+"<br>";
-            }
-            else{
-                data.errors.forEach(err =>
-                {
-                    document.getElementById('result_for_delete_doctor').innerHTML= "Del:";
-                    document.getElementById('result_for_delete_doctor').innerHTML+=err.field+':'+err.message;
-                });
-            }
-
-        }
-        document.getElementById('id_del').value="";
+        document.getElementById('id_reception').value="";
+        document.getElementById('diagnosis_reception').value="";
+        document.getElementById('comments_reception').value="";
     }
 
-    async function Send() {
-        document.getElementById('result_doctor').innerHTML="";
+    async function Search() {
+        document.getElementById('result_for_search_doctor_reception').innerHTML="";
         let send={
-            id:document.getElementById('id').value,
-            passport:document.getElementById('Passport').value,
-            name_Hospital:document.getElementById('name_hospital').value,
-            specialty:document.getElementById('Specialty').value
+            firstName:document.getElementById('first_name').value,
+            lastName:document.getElementById('last_name').value
         };
         console.log(send);
-        let response = await fetch('/api/v1/admin/addDoctor', {
+        let response = await fetch('/api/v1/users/Search/patient', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 'Accept': 'application/json'
@@ -192,29 +125,26 @@
         let data = await response.json();
         if(response.status === 201)
         {
-            document.getElementById('result_doctor').innerHTML ="Add:"+ data.userError;
+            document.getElementById('result_for_search_doctor_reception').innerHTML ="Search:"+ data.patients;
             //  window.location.href = '/login';
         }
         else
         {
             if(typeof  data.userError != "undefined"){
-                document.getElementById('result_doctor').innerHTML = "Add:"+data.userError+"<br>";
+                document.getElementById('result_for_search_doctor_reception').innerHTML = "Search:"+data.userError+"<br>";
             }
             else{
                 data.errors.forEach(err =>
                 {
-                    document.getElementById('result_doctor').innerHTML= "Add:";
-                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_for_update_doctor_reception').innerHTML= "Search:";
+                    document.getElementById('result_for_update_doctor_reception').innerHTML+=err.field+':'+err.message;
                 });
             }
 
         }
-        document.getElementById('id').value="";
-        document.getElementById('Passport').value="";
-        document.getElementById('name_hospital').value="";
-        document.getElementById('Specialty').value="";
+        document.getElementById('first_name').value="";
+        document.getElementById('last_name').value="";
     }
-
 
 </script>
 </body>

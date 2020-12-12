@@ -8,6 +8,7 @@
 <body>
 <input type="text" placeholder="Input id" id="id_user">
 <hr>
+<button onclick="Del_Reception()">Delete null reception</button>
 <button onclick="Del()">Delete</button>
 <button onclick="Send()">Refresh</button>
 
@@ -78,6 +79,26 @@
 
         }
         document.getElementById('id_user').value="";
+    }
+    async function Del_Reception() {
+        document.getElementById('result_for_delete').innerHTML="";
+        let response = await fetch('/api/v1/admin/delreception', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            }
+        });
+        let data = await response.json();
+        if(response.status === 200)
+        {
+            document.getElementById('result_for_delete').innerHTML ="Delete reception:"+ data.userError;
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            document.getElementById('result_for_delete').innerHTML= "Delete reception:"+data.userError+"<br>";
+
+        }
     }
 </script>
 </body>

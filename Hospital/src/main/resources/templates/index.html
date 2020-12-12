@@ -24,21 +24,31 @@
 
 <div class="footer">
     <p>Footer</p>
-    <div id="admin1"> </div>
+    <div id="doc_or_patient"> </div>
+
 </div>
+//https://inter-net.pro/javascript/sort-table
 <script type="text/javascript">
     function LogOut(){
         localStorage.setItem('token', 0);
         localStorage.setItem('email', 0);
         localStorage.setItem('Role_id',0);
         localStorage.setItem('User_id',0);
+        localStorage.setItem('who',0);
+        document.getElementById('doc_or_patient').innerHTML="";
     }
     console.log(localStorage.getItem('Role_id'));
-    if(localStorage.getItem('Role_id')==="2"){
-        document.getElementById("admin1").innerHTML="<a href='/admin'>admin</a>";
+    if(localStorage.getItem('who')==="pat"){
+        document.getElementById('doc_or_patient').innerHTML="<a href='/patient'>Reception</a>";
+    }
+    else if(localStorage.getItem('who')==="doc"){
+        document.getElementById('doc_or_patient').innerHTML="<a href='/doctor'>Doctor</a>";
+    }
+    else if(localStorage.getItem('who')==="adm"){
+        document.getElementById('doc_or_patient').innerHTML="<a href='/admin'>Admin</a>";
     }
     else{
-        document.getElementById("admin1").innerHTML="";
+        document.getElementById('doc_or_patient').innerHTML="";
     }
 </script>
 </body>

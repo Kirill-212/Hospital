@@ -1,6 +1,9 @@
 package by.bolvako.Hospital.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "receptions")
@@ -8,11 +11,10 @@ public class Reception {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne( cascade =  CascadeType.ALL, orphanRemoval =
-            true)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+
     private Doctor doctor;
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval =
-            true)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Patient patient;
     @Column(name = "time")
     private String time;

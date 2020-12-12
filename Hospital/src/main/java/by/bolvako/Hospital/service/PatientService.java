@@ -15,4 +15,5 @@ public interface PatientService  {
     Long getRoleForId(Long id);
     void delete(Long id);
     void Update(Patient patient);
+    Long findbyUser(User user);
 }

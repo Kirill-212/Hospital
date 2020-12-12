@@ -34,7 +34,15 @@ public class PatientServiceImpl implements PatientService {
         return registeredPatient;
 
     }
-
+    @Override
+    public Long findbyUser(User user) {
+        List<Patient> doctors=patientRepository.findByUser(user);
+        System.out.println(doctors.size()+" |size patient");
+        if(doctors.size()>0){
+            return  doctors.get(0).getId();
+        }
+        return -2L;
+    }
     @Override
     public List<Patient> getAll() {
         List<Patient> result =patientRepository.findAll();

@@ -11,4 +11,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     List<Patient> getAllById(Long id);
     List<Patient> getAllByUser(User user);
     List<Patient> findByUser(User user);
+
 }

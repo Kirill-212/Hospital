@@ -9,6 +9,7 @@ import by.bolvako.Hospital.model.User;
 import by.bolvako.Hospital.repository.*;
 import by.bolvako.Hospital.service.DoctorService;
 import by.bolvako.Hospital.service.PatientService;
+import by.bolvako.Hospital.service.ReceptionService;
 import by.bolvako.Hospital.service.UserService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,12 @@ public class AdminRestControllerV1 {
     private final UserService userService;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final ReceptionService receptionService;
     private final UserCrudRepository userCrudRepository;
     private final PatientCrudRepository patientCrudRepository;
     private final DoctorCrudRepository doctorCrudRepository;
     @Autowired
-    public AdminRestControllerV1(PatientService patientService,PatientCrudRepository patientCrudRepository,DoctorCrudRepository doctorCrudRepository,
+    public AdminRestControllerV1(PatientService patientService,ReceptionService receptionService,PatientCrudRepository patientCrudRepository,DoctorCrudRepository doctorCrudRepository,
                                  UserService userService,UserCrudRepository userCrudRepository,DoctorService doctorService) {
         this.userService = userService;
         this.userCrudRepository=userCrudRepository;
@@ -47,6 +49,7 @@ public class AdminRestControllerV1 {
         this.patientService=patientService;
         this.patientCrudRepository=patientCrudRepository;
         this.doctorCrudRepository=doctorCrudRepository;
+        this.receptionService=receptionService;
     }
 
     @GetMapping(value = "users/{id}")
@@ -153,7 +156,20 @@ public class AdminRestControllerV1 {
 
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+    @RequestMapping(value = "delreception", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity DeleteRECEPTION(){
+        Map<Object, Object> response = new HashMap<>();
 
+        try{
+            receptionService.delete();
+            response.put("userError", "reception delete successfully");
+        }catch (Exception e){
+            response.put("userError", "error delete");
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     @PostMapping("addDoctor")
     public ResponseEntity RegiserDoctor(@Valid @RequestBody DoctorDto requestDto, BindingResult errors) {

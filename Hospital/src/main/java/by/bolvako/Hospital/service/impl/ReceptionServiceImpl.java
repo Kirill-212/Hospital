@@ -94,9 +94,14 @@ public class ReceptionServiceImpl implements ReceptionService {
         return null;
     }
     @Override
-    public void delete(Long id) {
-        receptionCrudRepository.delete(findById(id));
-     //  receptionRepository.deleteById(id);
+    public void delete() {
+        List<Reception> rec=receptionRepository.findByPatientAndDoctor(null,null);
+        for(int i=0;i<rec.size();i++){
+            System.out.println(rec.get(i).getId());
+            receptionRepository.deleteById(rec.get(i).getId());
+
+        }
+
         log.info("IN delete - reception with id: {} successfully deleted");
     }
     @Override

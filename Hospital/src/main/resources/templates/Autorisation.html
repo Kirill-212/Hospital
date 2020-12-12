@@ -50,7 +50,22 @@ console.log(password);
             console.log(localStorage.getItem('token'));
             console.log(localStorage.getItem('Role_id'));
             document.getElementById('result_for_login').innerHTML = "You are successfully autorisation";
-
+            if(typeof  data.id_patient != "undefined"){
+                console.log( data.id_patient);
+                localStorage.setItem('id_patient',  data.id_patient);
+            }
+            if(typeof  data.id_doc != "undefined"){
+                console.log( data.id_doc);
+                localStorage.setItem('id_doc',  data.id_doc);
+            }
+            if(typeof  data.who != "undefined"){
+               console.log( data.who);
+                localStorage.setItem('who',  data.who);
+            }
+          else  {
+;
+                localStorage.setItem('who',  "Error");
+            }
         }
         else
         {

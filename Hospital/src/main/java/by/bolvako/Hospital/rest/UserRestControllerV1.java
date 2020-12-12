@@ -102,7 +102,10 @@ public class UserRestControllerV1 {
         String json="{";
         for(int i=0 ;i<doctors.size();i++){
             json+="{"+'"'+"Name_Hospital"+'"'+":"+'"'+doctors.get(i).getName_Hospital()+'"'+","+'"'+"id"+'"'+":"+'"'+doctors.get(i).getId()+'"'
-                    +","+'"'+"Specialty"+'"'+":"+'"'+doctors.get(i).getSpecialty()+'"'+"},";
+                    +","+'"'+"Specialty"+'"'+":"+'"'+doctors.get(i).getSpecialty()+'"'
+                    +","+'"'+"F"+'"'+":"+'"'+doctors.get(i).getUser().getFirstName()+'"'
+                    +","+'"'+"L"+'"'+":"+'"'+doctors.get(i).getUser().getLastName()+'"'
+                    +"},";
         }
         json+="}";
         json=json.replace("},}","}}");
@@ -141,30 +144,44 @@ public class UserRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(value = "delReception/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity DeleteUser(@PathVariable(value = "id") Long id){
+    @PostMapping("Search/patient")
+    public ResponseEntity SearchReception(@Valid @RequestBody SearchPatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
 
+        if(errors.hasErrors()){
+            throw new UsersValidationException(errors);
+        }
         try{
-            System.out.println(receptionService.findById(id));
-           Reception rec= receptionService.findById(id);
-            System.out.println(rec.toString());
-            if(rec==null){
-
-                response.put("userError", "reception not found or delete ");
-                return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+            List<User> users=userService.GetByFandL(requestDto.getFirstName(),requestDto.getLastName());
+            if(users!=null){
+                String json="{";
+                for (int i=0;i<users.size();i++){
+                    Patient patient=patientService.findById(patientService.findbyUser(users.get(i)));
+                    json+="{"+'"'+"Passport"+'"'+":"+'"'+patient.getPassport()+'"'+","+'"'+"id"+'"'+":"+'"'+patient.getId()+'"'
+                            +","+'"'+"Homeadress"+'"'+":"+'"'+patient.getHomeadress()+'"'
+                            +","+'"'+"F"+'"'+":"+'"'+patient.getUser().getFirstName()+'"'
+                            +","+'"'+"L"+'"'+":"+'"'+patient.getUser().getLastName()+'"'
+                            +"},";
+                }
+                json+="}";
+                json=json.replace("},}","}}");
+                System.out.println(json);
+                response.put("patients",json);
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
             }
-            System.out.println("ff");
-            response.put("userError", "reception del successfully");
-           receptionService.delete(id);
-
+            else{
+                response.put("userError", "error date patient not found ");
+            }
         }catch (Exception e){
-            response.put("userError", "reception not found or delete");
-            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+            response.put("userError", "check input data or user is not active");
+            return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
         }
 
-        return new ResponseEntity<>(response,HttpStatus.OK);
+
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
     @RequestMapping(value = "doctor/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForDoctor(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
@@ -175,8 +192,8 @@ public class UserRestControllerV1 {
             for (Reception reception : rec) {
                 System.out.println(reception.toString());
                 json += "{" + '"' + "comments" + '"' + ":" + '"' + reception.getComments() + '"' + "," + '"' + "date" + '"' + ":" + '"' + reception.getDate_reception() + '"' + "," + '"' + "diagnosis" + '"' + ":"
-                        + '"' + reception.getDiagnosis() + '"' + "," + '"' + "F_L" + '"' + ":" + '"' + reception.getPatient().getUser().getLastName() + " " + reception.getPatient().getUser().getFirstName() + '"'
-                        + "," + '"' + "time_" + '"' + ":" + '"' + reception.getTime() + '"' + "," + '"' + "id" + '"' + ":" + '"' + reception.getId() + '"' + "},";
+                        + '"' + reception.getDiagnosis() + '"' + "," + '"' + "F_L_PAT" + '"' + ":" + '"' + reception.getPatient().getUser().getLastName() + " " + reception.getPatient().getUser().getFirstName() + '"'
+                        + "," + '"' + "time_" + '"' + ":" + '"' + reception.getTime() + '"' + "," + '"' + "id_reception" + '"' + ":" + '"' + reception.getId() + '"' + "},";
             }
             json += "}";
             json = json.replace("},}", "}}");
@@ -200,10 +217,10 @@ public class UserRestControllerV1 {
                 System.out.println(reception.toString());
                 json.append("{" + '"' + "comments" + '"' + ":" + '"').append(reception.getComments()).append('"').append(",").append('"').append("date")
                         .append('"').append(":").append('"').append(reception.getDate_reception()).append('"').append(",").append('"').append("diagnosis")
-                        .append('"').append(":").append('"').append(reception.getDiagnosis()).append('"').append(",").append('"').append("F_L").append('"')
+                        .append('"').append(":").append('"').append(reception.getDiagnosis()).append('"').append(",").append('"').append("F_L_patient").append('"')
                         .append(":").append('"').append(reception.getPatient().getUser().getLastName()).append(" ").append(reception.getPatient().getUser()
                         .getFirstName()).append('"').append(",").append('"').append("time_").append('"').append(":").append('"').append(reception.getTime())
-                        .append('"').append(",").append('"').append("id").append('"').append(":").append('"').append(reception.getId()).append('"').append("},");
+                        .append('"').append(",").append('"').append("id_reception").append('"').append(":").append('"').append(reception.getId()).append('"').append("},");
             }
             json.append("}");
             json = new StringBuilder(json.toString().replace("},}", "}}"));

@@ -5,6 +5,8 @@ import by.bolvako.Hospital.model.Role;
 import by.bolvako.Hospital.model.Status;
 import by.bolvako.Hospital.model.User;
 import by.bolvako.Hospital.repository.DoctorRepository;
+import by.bolvako.Hospital.repository.ReceptionCrudRepository;
+import by.bolvako.Hospital.repository.ReceptionRepository;
 import by.bolvako.Hospital.repository.UserRepository;
 import by.bolvako.Hospital.service.DoctorService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +24,14 @@ public class DoctorServiceImpl  implements DoctorService {
             org.slf4j.LoggerFactory.getLogger(DoctorServiceImpl.class);
     private DoctorRepository doctorRepository;
     private UserRepository userRepository;
+    private ReceptionRepository receptionRepository;
+    private ReceptionCrudRepository receptionCrudRepository;
     @Autowired
-    public DoctorServiceImpl(DoctorRepository doctorRepository,UserRepository userRepository){
+    public DoctorServiceImpl(ReceptionCrudRepository receptionCrudRepository,ReceptionRepository receptionRepository,DoctorRepository doctorRepository,UserRepository userRepository){
         this.doctorRepository=doctorRepository;
         this.userRepository=userRepository;
+        this.receptionRepository=receptionRepository;
+        this.receptionCrudRepository=receptionCrudRepository;
     }
 
     @Override
@@ -68,18 +74,31 @@ public class DoctorServiceImpl  implements DoctorService {
     }
 
     @Override
+    public Long findbyUser(User user) {
+        List<Doctor> doctors=doctorRepository.findByUser(user);
+        System.out.println(doctors.size()+" |size doctor");
+        if(doctors.size()>0){
+            return  doctors.get(0).getId();
+        }
+        return -2L;
+    }
+
+    @Override
     public Long getRoleForId(Long id) {
         return null;
     }
 
     @Override
     public void delete(Long id) {
+
        doctorRepository.deleteById(id);
+       doctorRepository.flush();
         log.info("IN delete - doctor with id: {} successfully deleted");
     }
     @Override
     public  void Update(Doctor doctor){
         doctorRepository.save(doctor);
+
         log.info("IN patient - doctor with id: {} successfully update");
     }
 }

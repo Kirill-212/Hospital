@@ -16,5 +16,5 @@ public interface ReceptionService {
     List<Reception> getByTime(String time);
     List<Reception> getByTimeAndDate(String time,String date);
     Boolean CheckDate(String date);
-    void delete(Long id);
+    void delete();
 }
