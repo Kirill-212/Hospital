@@ -39,22 +39,26 @@ public class PatientServiceImpl implements PatientService {
         List<Patient> doctors=patientRepository.findByUser(user);
         System.out.println(doctors.size()+" |size patient");
         if(doctors.size()>0){
+            log.info("IN findbyUser - patient: {} ", doctors.get(0).getId());
             return  doctors.get(0).getId();
         }
+        log.info("IN findbyUser - patient: not found");
         return -2L;
     }
     @Override
     public List<Patient> getAll() {
         List<Patient> result =patientRepository.findAll();
-        log.info("IN getAll - {} Patient found", result.size());
+        log.info("IN getAll - {} patient ", result);
         return result;
     }
 
     @Override
     public Boolean GetUserInPatient(User user) {
         if(patientRepository.findByUser(user).size()>0){
+            log.info("IN GetUserInPatient - {} patient", false);
             return false;
         }
+        log.info("IN GetUserInPatient - {} patient", true);
         return  true;
     }
 
@@ -62,11 +66,11 @@ public class PatientServiceImpl implements PatientService {
     public Patient findById(Long id) {
         Patient result =patientRepository.findById(id).orElse(null);
         if (result == null) {
-            log.warn("IN findById - no Patient found by id: {}", id);
+            log.info("IN findById - no patient: found by id: not found");
             return null;
         }
 
-        log.info("IN findById - Patient: {} found by id: {}", result);
+        log.info("IN findById - patient:  found by id: {}", result);
         return result;
     }
 
@@ -78,12 +82,12 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public void delete(Long id) {
         patientRepository.deleteById(id);
-        log.info("IN delete - patient with id: {} successfully deleted");
+        log.info("IN delete - patient:  successfully deleted");
     }
 
     @Override
     public  void Update(Patient patient){
         patientRepository.save(patient);
-        log.info("IN update - patient with id: {} successfully update");
+        log.info("IN update - patient :  successfully update");
     }
 }

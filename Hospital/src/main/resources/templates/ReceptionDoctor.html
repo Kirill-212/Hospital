@@ -13,7 +13,6 @@
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
     <a href="/" >Main</a>
-    <a href="/admin">Back</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
@@ -150,7 +149,7 @@
             for (let i = 0; i < json.length; i++) {
                 table_result += "<tr>";
                 table_result += "<td>" + json[i].id + "</td>";
-                table_result += "<td>" + json[i].Passport + "</td>";
+                table_result += "<td>" + "Not available" + "</td>";
                 table_result += "<td>" + json[i].Homeadress + "</td>";
                 table_result += "<td>" + json[i].F + " " + json[i].L + "</td>";
                 table_result += "</tr>";

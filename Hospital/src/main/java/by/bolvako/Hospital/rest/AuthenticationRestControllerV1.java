@@ -13,6 +13,7 @@ import by.bolvako.Hospital.service.PatientService;
 import by.bolvako.Hospital.service.RoleService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.validator.EmailValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +31,12 @@ import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/auth/")
 public class AuthenticationRestControllerV1 {
-
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(AuthenticationRestControllerV1.class);
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -66,7 +68,7 @@ public class AuthenticationRestControllerV1 {
     @PostMapping("Register")
     public ResponseEntity Regiser(@Valid @RequestBody UserDto requestDto, BindingResult errors) {
         emailValidator.validate(requestDto,errors);
-
+        log.info("Regiser:/api/v1/auth/Register");
         Map<Object, Object> response = new HashMap<>();
         if(errors.hasErrors()){
             throw new UsersValidationException(errors);
@@ -83,11 +85,6 @@ public class AuthenticationRestControllerV1 {
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
 
-
-
-
-
-
     }
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
@@ -99,7 +96,6 @@ public class AuthenticationRestControllerV1 {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
         System.out.println(user.getId()+" login");
-
         String token = jwtTokenProvider.createToken(username, user.getRoles());
 
             if(patientService.findbyUser(userService.findByEmail(username))==-2L &&
@@ -115,7 +111,7 @@ public class AuthenticationRestControllerV1 {
                     response.put("id_doc",doctorService.findbyUser(userService.findByEmail(username)));
                 }
             }
-
+        log.info("login:/api/v1/auth/login");
         response.put("email", username);
         response.put("token", token);
         response.put("ROLE",user.getRoles().get(0).getId());

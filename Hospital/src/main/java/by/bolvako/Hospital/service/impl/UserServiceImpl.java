@@ -11,8 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 @Service
 @Slf4j
@@ -47,6 +52,8 @@ public class UserServiceImpl implements UserService {
         return registeredUser;
     }
 
+
+
     @Override
     public List<User> getAll() {
         List<User> result = userRepository.findAll();
@@ -58,6 +65,7 @@ public class UserServiceImpl implements UserService {
     public List<User> GetByFandL(String f, String l) {
         List<User> users=userRepository.findByFirstNameAndLastName(f,l);
         if(users.size()>0){
+            log.info("IN GetByFandL - {} users found", users);
             return  users;
         }
         return null;
@@ -65,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String username) {
-        //System.out.println(username);
         User result = userRepository.findByEmail(username);
         log.info("IN findByUsername - user: {} found by username: {}", result, username);
         return result;
@@ -74,26 +81,25 @@ public class UserServiceImpl implements UserService {
     public Long getRoleForId(Long id){
         User result1 = userRepository.findById(id).get();
         Long IdRole=result1.getRoles().get(0).getId();
-
-        log.info("IN findById - user: {} found byIdRole: {}", IdRole);
+        log.info("IN getRoleForId - user: {} found byIdRole: {}", IdRole);
         return IdRole;
     }
     @Override
     public User findById(Long id) {
         User result = userRepository.findById(id).orElse(null);
         if (result == null) {
-            log.warn("IN findById - no user found by id: {}", id);
+            log.info("IN findById - no user found by id: {}", id);
             return null;
         }
 
-        log.info("IN findById - user: {} found by id: {}", result);
+        log.info("IN findById - user: {} ", result);
         return result;
     }
 
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
-        log.info("IN delete - user with id: {} successfully deleted");
+        log.info("IN delete - user  successfully deleted");
     }
 }
 

@@ -48,7 +48,7 @@ public class DoctorServiceImpl  implements DoctorService {
     @Override
     public List<Doctor> getAll() {
         List<Doctor> result =doctorRepository.findAll();
-        log.info("IN getAll - {} Doctor found", result.size());
+        log.info("IN getAll - {} Doctor found", result);
         return result;
     }
 
@@ -56,8 +56,10 @@ public class DoctorServiceImpl  implements DoctorService {
     public Boolean GetUserInDoctor(User user) {
 
         if(doctorRepository.findByUser(user).size()>0){
+            log.info("IN GetUserInDoctor - Doctor: {} ", false);
             return false;
         }
+        log.info("IN GetUserInDoctor - Doctor: {} ", true);
         return  true;
     }
 
@@ -65,11 +67,11 @@ public class DoctorServiceImpl  implements DoctorService {
     public Doctor findById(Long id) {
     Doctor result =doctorRepository.findById(id).orElse(null);
         if (result == null) {
-            log.warn("IN findById - no Doctor found by id: {}", id);
+            log.info("IN findById - no Doctor found by id: not found");
             return null;
         }
 
-        log.info("IN findById - Doctor: {} found by id: {}", result);
+        log.info("IN findById - Doctor found by id: {}", result);
         return result;
     }
 
@@ -78,8 +80,10 @@ public class DoctorServiceImpl  implements DoctorService {
         List<Doctor> doctors=doctorRepository.findByUser(user);
         System.out.println(doctors.size()+" |size doctor");
         if(doctors.size()>0){
+            log.info("IN findbyUser - Doctor: {} ", doctors.get(0).getId());
             return  doctors.get(0).getId();
         }
+        log.info("IN findbyUser - Doctor: not found");
         return -2L;
     }
 
@@ -93,12 +97,12 @@ public class DoctorServiceImpl  implements DoctorService {
 
        doctorRepository.deleteById(id);
        doctorRepository.flush();
-        log.info("IN delete - doctor with id: {} successfully deleted");
+        log.info("IN delete - doctor with id: successfully deleted");
     }
     @Override
     public  void Update(Doctor doctor){
         doctorRepository.save(doctor);
 
-        log.info("IN patient - doctor with id: {} successfully update");
+        log.info("IN update - doctor with id: successfully update");
     }
 }

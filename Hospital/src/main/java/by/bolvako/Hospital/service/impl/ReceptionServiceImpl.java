@@ -36,6 +36,7 @@ public class ReceptionServiceImpl implements ReceptionService {
         LocalDate date_input=LocalDate.of(parseInt(date.substring(0,4),10),
                 parseInt(date.substring(5,7),10),parseInt(date.substring(8,date.length()),10));
         DayOfWeek dayOfWeek = date_input.getDayOfWeek();
+        log.info("IN CheckDate Reception");
         return !dayOfWeek.toString().equals("SATURDAY") && !dayOfWeek.toString().equals("SUNDAY") &&
                 (date_input.compareTo(date_now) > 0);
     }
@@ -49,7 +50,7 @@ public class ReceptionServiceImpl implements ReceptionService {
 
     @Override
     public List<Reception> getAll() {
-        log.info("IN get all ");
+        log.info("IN getAll Reception");
         return receptionRepository.findAll();
     }
 
@@ -57,8 +58,10 @@ public class ReceptionServiceImpl implements ReceptionService {
     public List<Reception> getByIdDoctor(Doctor doctor) {
         List<Reception> res=receptionRepository.findByDoctor(doctor);
         if(res.size()>0){
+            log.info("IN getByIdDoctor - Reception  found by id: {}", res);
             return  res;
         }
+        log.info("IN getByIdDoctor - Reception  null");
         return null;
     }
 
@@ -66,11 +69,11 @@ public class ReceptionServiceImpl implements ReceptionService {
     public Reception findById(Long id) {
         Reception result =receptionRepository.findById(id).orElse(null);
         if (result == null) {
-            log.warn("IN findById - no Reception found by id: {}", id);
+            log.info("IN findById - no Reception found by id: null");
             return null;
         }
 
-        log.info("IN findById - Reception: {} found by id: {}", result);
+        log.info("IN findById - Reception  found by id: {}", result);
         return result;
     }
 
@@ -79,8 +82,10 @@ public class ReceptionServiceImpl implements ReceptionService {
     public List<Reception> getByIdPatient(Patient patient) {
         List<Reception> res=receptionRepository.findByPatient(patient);
         if(res.size()>0){
+            log.info("IN getByIdPatient - Reception  found by id: {}", res);
             return  res;
         }
+        log.info("IN getByIdPatient - Reception  null");
         return null;
     }
 
@@ -102,7 +107,7 @@ public class ReceptionServiceImpl implements ReceptionService {
 
         }
 
-        log.info("IN delete - reception with id: {} successfully deleted");
+        log.info("IN delete - reception successfully deleted");
     }
     @Override
     public List<Reception> getByTimeAndDate(String time, String date) {

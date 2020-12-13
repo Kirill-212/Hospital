@@ -15,4 +15,5 @@ public interface UserService {
     User findById(Long id);
     Long getRoleForId(Long id);
     void delete(Long id);
+
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Doctor</title>
+    <title>admin Doctor</title>
 
     <link rel="stylesheet" type="text/css" href ="http://localhost:8075/style.css"/>
 
@@ -59,7 +59,7 @@
     <hr>
     <hr>
     <hr>
-    <div  id="result_for_login_doctor"> </div>
+    <table  id="result_for_login_doctor"> </table>
 </div>
 
 <div class="footer">
@@ -89,13 +89,34 @@
         {
             console.log(localStorage.getItem('token'));
             console.log(localStorage.getItem('Role_id'));
-            document.getElementById('result_for_login_doctor').innerHTML =data.doctor;
+            let json = JSON.parse(data.doctor);
+            table_result =
+                "<tr><th onclick='sortTable(0)'>Id doctor</th>" +
+                "<th onclick='sortTable(1)'>Name hospital</th>" +
+                "<th onclick='sortTable(2)'>Passport</th>" +
+                "<th onclick='sortTable(3)'>Specialty</th>" +
+                "<th onclick='sortTable(4)'>Id user</th></tr>";
+            for (let i = 0; i < json.length; i++) {
+                table_result += "<tr>";
+                table_result += "<td>" + json[i].id + "</td>";
+                table_result += "<td>" + json[i].Name_Hospital + "</td>";
+                table_result += "<td>" + json[i].passport + "</td>";
+                table_result += "<td>" + json[i].Specialty + "</td>";
+                table_result += "<td>" + json[i].id_user + "</td>";
+                table_result += "</tr>";
+            }
+
+            document.getElementById('result_for_login_doctor').innerHTML = table_result;
+
         }
         else
         {
             document.getElementById('result_for_login_doctor').innerHTML="Get:error";
         }
     }
+
+
+
     async function Update() {
         document.getElementById('result_for_update_doctor').innerHTML="";
         let send={
@@ -215,7 +236,60 @@
         document.getElementById('Specialty').value="";
     }
 
-
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("result_for_login_doctor");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch= true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount ++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
 </script>
 </body>
 </html>
