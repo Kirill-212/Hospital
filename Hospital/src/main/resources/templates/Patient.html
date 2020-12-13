@@ -19,33 +19,50 @@
 <div class="contentreg">
     <button onclick="getAll()">refresh</button>
     <hr>
-    <b>Id doctor:</b>
-    <input type="text" placeholder="Input id doctor" id="id_doctor_reception" >
+    <b>Id user:</b>
+    <input type="text" placeholder="Input id user" id="id" >
     <hr>
-    <b>Time:</b>
-    <input type="text" placeholder="Input time for example 10:00" id="time_reception">
+    <b>Home address:</b>
+    <input type="text" placeholder="Input home address" id="Home_adress">
     <hr>
-    <b>Date:</b>
-    <input type="text" placeholder="Input date for example 2020-12-14 yyyy-mm-dd" id="date_reception">
+    <b>Passport:</b>
+    <input type="text" placeholder="Input passport" id="Passport">
     <hr>
-    <b>Symptoms:</b>
-    <input type="text" placeholder="Input symptoms" id="symptoms_reception">
-    <hr>
-    <button onclick="Send()">Add reception</button>
 
+    <button onclick="Send()">Add patient</button>
+    <hr>
+    <b>Del for id Patient:</b>
+    <input type="text" placeholder="Input id patient" id="id_del">
+    <hr>
+    <button onclick="Del()">Delete</button>
+    <hr>
+    <hr>
+    <b>Id Patient:</b>
+    <input type="text" placeholder="Input id patient" id="id_patient" >
+    <hr>
+    <b>New home address:</b>
+    <input type="text" placeholder="Input home address" id="Home_adress_patient">
+    <hr>
+    <b>New passport:</b>
+    <input type="text" placeholder="Input new passport" id="Passport_patient">
+    <hr>
+    <button onclick="Update()">Update patient</button>
 </div>
 
 <div class="footer">
     <div  id="result"> </div>
-    <div id="result_all_reception_for_patient"></div>
-    <div  id="result_all_doctor"> </div>
+    <div  id="result_for_delete"> </div>
+    <div  id="result_for_update"> </div>
+    <div  id="result_for_login"> </div>
 </div>
 <script type="text/javascript">
     getAll();
     async function getAll() {
-        document.getElementById('result_all_doctor').innerHTML="";
+        document.getElementById('result_for_delete').innerHTML="";
+        document.getElementById('result_for_update').innerHTML="";
+        document.getElementById('result_for_update').innerHTML="";
         document.getElementById('result').innerHTML = "";
-        let response = await fetch("/api/v1/users/allDoctor",
+        let response = await fetch("/api/v1/admin/patient",
             {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
@@ -55,51 +72,29 @@
                 })
             });
         let data = await response.json();
-        document.getElementById('result_all_doctor').innerHTML = "";
+        document.getElementById("result_for_login").innerHTML = "";
         if(response.status === 200)
-        {
+        {document.getElementById("result_for_login").innerHTML = "";
+            console.log(data.users);
             console.log(localStorage.getItem('token'));
             console.log(localStorage.getItem('Role_id'));
-            document.getElementById('result_all_doctor').innerHTML =data.doctor;
+            document.getElementById("result_for_login").innerHTML =data.patients;
         }
         else
         {
-            document.getElementById('result_all_doctor').innerHTML="Get:error";
-        }
-        await getAll_Reception();
-    }
-
-    async function getAll_Reception() {
-
-        document.getElementById('result_all_reception_for_patient').innerHTML = "";
-        let response = await fetch("/api/v1/users/patient/"+localStorage.getItem('id_patient'),
-            {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
-            });
-        let data = await response.json();
-        document.getElementById('result_all_reception_for_patient').innerHTML = "";
-        if(response.status === 200)
-        {
-            document.getElementById('result_all_reception_for_patient').innerHTML =data.reception;
-        }
-        else
-        {
-            document.getElementById('result_all_reception_for_patient').innerHTML="Get:error";
+            document.getElementById("result_for_login").innerHTML="Get:error";
         }
     }
 
-    async function Send() {
-        document.getElementById('result').innerHTML = "";
+    async function Update() {
+        document.getElementById('result_for_update').innerHTML="";
         let send={
-            symptoms:document.getElementById('symptoms_reception').value,
-            id_doctor:document.getElementById('id_doctor_reception').value,
-            time:document.getElementById('time_reception').value,
-            date:document.getElementById('date_reception').value,
-            id_patient:localStorage.getItem('id_patient'),
+            id:document.getElementById('id_patient').value,
+            passport:document.getElementById('Passport_patient').value,
+            homeadress:document.getElementById('Home_adress_patient').value,
         };
         console.log(send);
-        let response = await fetch('/api/v1/users/addReception', {
+        let response = await fetch('/api/v1/admin/updatePatient', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 'Accept': 'application/json'
@@ -107,7 +102,81 @@
             body: JSON.stringify(send)
         });
         let data = await response.json();
-        console.log(response.status);
+        if(response.status === 200)
+        {
+            document.getElementById('result_for_update').innerHTML ="Update:"+ data.userError;
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result_for_update').innerHTML = "Update:"+data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {
+                    document.getElementById('result_for_update').innerHTML= "Update:";
+                    document.getElementById('result_for_update').innerHTML+=err.field+':'+err.message;
+                });
+            }
+
+        }
+        document.getElementById('id_patient').value="";
+        document.getElementById('Passport_patient').value="";
+        document.getElementById('Home_adress_patient').value="";
+    }
+    async function Del() {
+
+        document.getElementById('result_for_delete').innerHTML="";
+        let send={
+            id:document.getElementById('id_del').value
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/admin/delPatient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        if(response.status === 200)
+        {
+            document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError;
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {
+                    document.getElementById('result_for_delete').innerHTML="Delete:";
+                    document.getElementById('result_for_delete').innerHTML+=err.field+':'+err.message+"<br>";
+                });
+            }
+
+        }
+        document.getElementById('id_del').value="";
+    }
+    async function Send() {
+        document.getElementById('result').innerHTML = "";
+        let send={
+            id:document.getElementById('id').value,
+            passport:document.getElementById('Passport').value,
+            homeadress:document.getElementById('Home_adress').value,
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/admin/addPatient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
         if(response.status === 201)
         {
             document.getElementById('result').innerHTML ="Add:"+ data.userError;
@@ -125,10 +194,9 @@
                 });
             }
         }
-        document.getElementById('symptoms_reception').value="";
-        document.getElementById('id_doctor_reception').value="";
-        document.getElementById('time_reception').value="";
-        document.getElementById('date_reception').value="";
+        document.getElementById('id').value="";
+        document.getElementById('Passport').value="";
+        document.getElementById('Home_adress').value="";
     }
 
 

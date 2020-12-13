@@ -9,6 +9,7 @@ import by.bolvako.Hospital.service.PatientService;
 import by.bolvako.Hospital.service.ReceptionService;
 import by.bolvako.Hospital.service.UserService;
 
+
 import lombok.Data;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class UserRestControllerV1 {
     public ResponseEntity PostDoctor(@RequestBody AdminUserDto requestDto) {
         List<Doctor> doctors=doctorService.getAll();
 
-        String json="{";
+        String json="[";
         for(int i=0 ;i<doctors.size();i++){
             json+="{"+'"'+"Name_Hospital"+'"'+":"+'"'+doctors.get(i).getName_Hospital()+'"'+","+'"'+"id"+'"'+":"+'"'+doctors.get(i).getId()+'"'
                     +","+'"'+"Specialty"+'"'+":"+'"'+doctors.get(i).getSpecialty()+'"'
@@ -107,8 +108,8 @@ public class UserRestControllerV1 {
                     +","+'"'+"L"+'"'+":"+'"'+doctors.get(i).getUser().getLastName()+'"'
                     +"},";
         }
-        json+="}";
-        json=json.replace("},}","}}");
+        json+="]";
+        json=json.replace("},]","}]");
         System.out.println(json);
         Map<Object, Object> response = new HashMap<>();
         response.put("doctor",json);
@@ -152,21 +153,31 @@ public class UserRestControllerV1 {
             throw new UsersValidationException(errors);
         }
         try{
+            System.out.println(requestDto.getFirstName()+"|"+requestDto.getLastName());
             List<User> users=userService.GetByFandL(requestDto.getFirstName(),requestDto.getLastName());
             if(users!=null){
-                String json="{";
+                StringBuilder json= new StringBuilder("[");
+             //   System.out.println(users.get(0).getId()+"|"+users.get(2).getId()+"|"+users.get(1).getId()+"||"+users.size());
                 for (int i=0;i<users.size();i++){
+                    if(patientService.findbyUser(users.get(i))!=-2L){
                     Patient patient=patientService.findById(patientService.findbyUser(users.get(i)));
-                    json+="{"+'"'+"Passport"+'"'+":"+'"'+patient.getPassport()+'"'+","+'"'+"id"+'"'+":"+'"'+patient.getId()+'"'
-                            +","+'"'+"Homeadress"+'"'+":"+'"'+patient.getHomeadress()+'"'
-                            +","+'"'+"F"+'"'+":"+'"'+patient.getUser().getFirstName()+'"'
-                            +","+'"'+"L"+'"'+":"+'"'+patient.getUser().getLastName()+'"'
-                            +"},";
+                    json.append("{" + '"' + "Passport" + '"' + ":" + '"').
+                            append(patient.getPassport()).append('"').append(",").append('"').
+                            append("id").append('"').append(":").append('"').append(patient.getId()).
+                            append('"').append(",").append('"').append("Homeadress").append('"')
+                            .append(":").append('"').append(patient.getHomeadress()).append('"').
+                            append(",").append('"').append("F").append('"').append(":").append('"').
+                            append(patient.getUser().getFirstName()).append('"').append(",").append('"')
+                            .append("L").append('"').append(":").append('"').append(patient.getUser().
+                            getLastName()).append('"').append("},");
+                    }
                 }
-                json+="}";
-                json=json.replace("},}","}}");
+                json.append("]");
+                json = new StringBuilder(json.toString().replace("},]", "}]"));
+                System.out.println("---");
                 System.out.println(json);
-                response.put("patients",json);
+                System.out.println("---");
+                response.put("patients", json.toString());
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             }
             else{
@@ -185,7 +196,7 @@ public class UserRestControllerV1 {
     @RequestMapping(value = "doctor/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForDoctor(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
-        String json="{";
+        String json="[";
         try {
             List<Reception> rec = receptionService.getByIdDoctor(doctorService.findById(id));
 
@@ -195,8 +206,12 @@ public class UserRestControllerV1 {
                         + '"' + reception.getDiagnosis() + '"' + "," + '"' + "F_L_PAT" + '"' + ":" + '"' + reception.getPatient().getUser().getLastName() + " " + reception.getPatient().getUser().getFirstName() + '"'
                         + "," + '"' + "time_" + '"' + ":" + '"' + reception.getTime() + '"' + "," + '"' + "id_reception" + '"' + ":" + '"' + reception.getId() + '"' + "},";
             }
-            json += "}";
-            json = json.replace("},}", "}}");
+            json += "]";
+            json = json.replace("},]", "}]");
+            System.out.println("---");
+            System.out.println(json);
+            System.out.println("---");
+
             response.put("reception",json);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
@@ -209,21 +224,39 @@ public class UserRestControllerV1 {
     @RequestMapping(value = "patient/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForPatient(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
-        StringBuilder json= new StringBuilder("{");
+        StringBuilder json= new StringBuilder("[");
         try {
             List<Reception> rec = receptionService.getByIdPatient(patientService.findById(id));
 
             for (Reception reception : rec) {
                 System.out.println(reception.toString());
-                json.append("{" + '"' + "comments" + '"' + ":" + '"').append(reception.getComments()).append('"').append(",").append('"').append("date")
-                        .append('"').append(":").append('"').append(reception.getDate_reception()).append('"').append(",").append('"').append("diagnosis")
-                        .append('"').append(":").append('"').append(reception.getDiagnosis()).append('"').append(",").append('"').append("F_L_patient").append('"')
-                        .append(":").append('"').append(reception.getPatient().getUser().getLastName()).append(" ").append(reception.getPatient().getUser()
-                        .getFirstName()).append('"').append(",").append('"').append("time_").append('"').append(":").append('"').append(reception.getTime())
-                        .append('"').append(",").append('"').append("id_reception").append('"').append(":").append('"').append(reception.getId()).append('"').append("},");
+                json.append("{" + '"' + "comments" + '"' + ":" + '"').append(reception.getComments()).append('"').append(",")
+                        .append('"').append("date")
+                        .append('"').append(":").append('"').append(reception.getDate_reception()).append('"').append(",")
+                        .append('"').append("diagnosis")
+                        .append('"').append(":").append('"').append(reception.getDiagnosis()).append('"')
+                        .append(",").append('"').append("F_L_patient").append('"')
+                        .append(":").append('"').append(reception.getPatient().getUser().getLastName()).append(" ")
+                        .append(reception.getPatient().getUser()
+                        .getFirstName()).append('"').append(",").append('"').append("time_").append('"').append(":")
+                        .append('"').append(reception.getTime())
+                        .append('"').append(",")
+                        .append('"').append("Doctor").append('"').append(":").append('"')
+                        .append(reception.getDoctor().getUser().getLastName()).append(" ").
+                        append(reception.getDoctor().getUser()
+                        .getFirstName())
+                        .append('"').append(",")
+                        .append('"').append("Name_Hospital").append('"').append(":").append('"')
+                        .append(reception.getDoctor().getName_Hospital())
+                        .append('"').append(",")
+                        .append('"').append("Specialty").append('"').append(":").append('"')
+                        .append(reception.getDoctor().getSpecialty())
+                        .append('"').append(",")
+                        .append('"').append("id_reception").append('"').append(":").append('"')
+                        .append(reception.getId()).append('"').append("},");
             }
-            json.append("}");
-            json = new StringBuilder(json.toString().replace("},}", "}}"));
+            json.append("]");
+            json = new StringBuilder(json.toString().replace("},]", "}]"));
             response.put("reception",json);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }

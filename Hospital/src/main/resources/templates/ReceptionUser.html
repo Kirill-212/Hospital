@@ -1,10 +1,286 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Patient</title>
+
+    <link rel="stylesheet" type="text/css" href ="http://localhost:8075/style.css"/>
+
 </head>
 <body>
 
+<div class="topnav">
+    <a href="/reg">Register</a>
+    <a href="/aut">Autorisation</a>
+    <a href="/" >Main</a>
+    <a href="/admin">Back</a>
+    <h1 class="HeaderText">Hospital</h1>
+</div>
+<div class="contentreg">
+    <button onclick="getAll()">refresh</button>
+    <hr>
+    <b>Id doctor:</b>
+    <input type="text" placeholder="Input id doctor" id="id_doctor_reception" >
+    <hr>
+    <b>Time:</b>
+    <input type="text" placeholder="Input time for example 10:00" id="time_reception">
+    <hr>
+    <b>Date:</b>
+    <input type="text" placeholder="Input date for example 2020-12-14 yyyy-mm-dd" id="date_reception">
+    <hr>
+    <b>Symptoms:</b>
+    <input type="text" placeholder="Input symptoms" id="symptoms_reception">
+    <hr>
+    <button onclick="Send()">Add reception</button>
+
+</div>
+
+<div class="footer">
+    <table id="result_all_doctor"></table>
+    <table id="result_all_reception_for_patient"></table>
+    <div  id="result"> </div>
+</div>
+<script type="text/javascript">
+    getAll();
+    async function getAll() {
+        document.getElementById('result_all_doctor').innerHTML="";
+        document.getElementById('result').innerHTML = "";
+        let response = await fetch("/api/v1/users/allDoctor",
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                body: JSON.stringify({
+                    User_id:  localStorage.getItem('User_id'),
+                    Role_id: localStorage.getItem('Role_id')
+                })
+            });
+        let data = await response.json();
+        document.getElementById('result_all_doctor').innerHTML = "";
+        if(response.status === 200)
+        {
+            console.log(localStorage.getItem('token'));
+            console.log(localStorage.getItem('Role_id'));
+            let json = JSON.parse(data.doctor);
+            table_result =
+                "<tr><th onclick='sortTable(0)'>Id Doctor</th>" +
+                "<th onclick='sortTable(1)'>Name hospital</th>" +
+                "<th onclick='sortTable(2)'>Specialty</th>" +
+                "<th onclick='sortTable(3)'>First and Last name</th></tr>";
+            for (let i = 0; i < json.length; i++) {
+                table_result += "<tr>";
+                table_result += "<td>" + json[i].id + "</td>";
+                table_result += "<td>" + json[i].Name_Hospital + "</td>";
+                table_result += "<td>" + json[i].Specialty + "</td>";
+                table_result += "<td>" + json[i].F+" "+json[i].F + "</td>";
+                table_result += "</tr>";
+            }
+            document.getElementById('result_all_doctor').innerHTML = table_result;
+
+        }
+        else
+        {
+            document.getElementById('result_all_doctor').innerHTML="Get:error";
+        }
+        await getAll_Reception();
+    }
+
+    async function getAll_Reception() {
+
+        document.getElementById('result_all_reception_for_patient').innerHTML = "";
+        let response = await fetch("/api/v1/users/patient/"+localStorage.getItem('id_patient'),
+            {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+            });
+        let data = await response.json();
+        document.getElementById('result_all_reception_for_patient').innerHTML = "";
+        if(response.status === 200)
+        {
+            let json = JSON.parse(data.reception);
+            console.log(json);
+            table_result =
+                "<tr><th onclick='sortTable1(0)'>Id reception</th>" +
+                "<th onclick='sortTable1(1)'>Diagnosis</th>" +
+                "<th onclick='sortTable1(2)'>Time</th>" +
+                "<th onclick='sortTable1(3)'>Date</th>" +
+                "<th onclick='sortTable1(4)'>Comments</th>" +
+                "<th onclick='sortTable1(5)'>First and Last name patient</th>" +
+                "<th onclick='sortTable1(6)'>First and Last name doctor</th>" +
+                "<th onclick='sortTable1(7)'>Name hospital</th>" +
+                "<th onclick='sortTable1(8)'>Specialty</th>" +
+                "</tr>";
+            for (let i = 0; i < json.length; i++) {
+                table_result += "<tr>";
+                table_result += "<td>" + json[i].id_reception + "</td>";
+                table_result += "<td>" + json[i].diagnosis + "</td>";
+                table_result += "<td>" + json[i].time_ + "</td>";
+                table_result += "<td>" + json[i].date+ "</td>";
+                table_result += "<td>" + json[i].comments+ "</td>";
+                table_result += "<td>" + json[i].F_L_patient+ "</td>";
+                table_result += "<td>" + json[i].Doctor+ "</td>";
+                table_result += "<td>" + json[i].Name_Hospital+ "</td>";
+                table_result += "<td>" + json[i].Specialty+ "</td>";
+                table_result += "</tr>";
+            }
+            document.getElementById('result_all_reception_for_patient').innerHTML = table_result;
+        }
+        else
+        {
+            document.getElementById('result_all_reception_for_patient').innerHTML="Get:error";
+        }
+    }
+
+    async function Send() {
+        document.getElementById('result').innerHTML = "";
+        let send={
+            symptoms:document.getElementById('symptoms_reception').value,
+            id_doctor:document.getElementById('id_doctor_reception').value,
+            time:document.getElementById('time_reception').value,
+            date:document.getElementById('date_reception').value,
+            id_patient:localStorage.getItem('id_patient'),
+        };
+        console.log(send);
+        let response = await fetch('/api/v1/users/addReception', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 'Accept': 'application/json'
+            },
+            body: JSON.stringify(send)
+        });
+        let data = await response.json();
+        console.log(response.status);
+        if(response.status === 201)
+        {
+            document.getElementById('result').innerHTML ="Add:"+ data.userError;
+            //  window.location.href = '/login';
+        }
+        else
+        {
+            if(typeof  data.userError != "undefined"){
+                document.getElementById('result').innerHTML ="Add:"+ data.userError+"<br>";
+            }
+            else{
+                data.errors.forEach(err =>
+                {document.getElementById('result').innerHTML="Add:";
+                    document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";
+                });
+            }
+        }
+        document.getElementById('symptoms_reception').value="";
+        document.getElementById('id_doctor_reception').value="";
+        document.getElementById('time_reception').value="";
+        document.getElementById('date_reception').value="";
+    }
+    function sortTable1(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("result_all_reception_for_patient");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch= true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount ++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("result_all_doctor");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch= true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount ++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+
+</script>
 </body>
 </html>
