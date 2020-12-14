@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -43,14 +44,16 @@ public class AdminRestControllerV1 {
     private final PatientService patientService;
     private final ReceptionService receptionService;
     private final UserCrudRepository userCrudRepository;
+    private final UserRepository userRepository;
     private final PatientCrudRepository patientCrudRepository;
     private final DoctorCrudRepository doctorCrudRepository;
     @Autowired
     public JavaMailSender emailSender;
     @Autowired
-    public AdminRestControllerV1(PatientService patientService,ReceptionService receptionService,PatientCrudRepository patientCrudRepository,DoctorCrudRepository doctorCrudRepository,
+    public AdminRestControllerV1(UserRepository userRepository,PatientService patientService,ReceptionService receptionService,PatientCrudRepository patientCrudRepository,DoctorCrudRepository doctorCrudRepository,
                                  UserService userService,UserCrudRepository userCrudRepository,DoctorService doctorService) {
         this.userService = userService;
+        this.userRepository=userRepository;
         this.userCrudRepository=userCrudRepository;
         this.doctorService=doctorService;
         this.patientService=patientService;
@@ -69,21 +72,26 @@ public class AdminRestControllerV1 {
         log.info("getUserById:/api/v1/admin/users/{id}");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    @PostMapping(value = "admin")
-    public ResponseEntity Post(@RequestBody AdminUserDto requestDto) {
-        List<User> users=userService.getAll();
-        String json="[";
-        for(int i=0 ;i<users.size();i++){
-            json+="{"+'"'+"Role"+'"'+":"+'"'+userService.getAll().get(i).getRoles().get(0).getName()+'"'+","+'"'+"user"+'"'+":"+'"'+users.get(i).getEmail()+'"'+","+'"'+"firstName"+'"'+":"
-                    +'"'+users.get(i).getFirstName()+'"'+","+'"'+"lastName"+'"'+":"+'"'+users.get(i).getLastName()+'"'
-                    +","+'"'+"id_user"+'"'+":"+'"'+users.get(i).getId()+'"'+"},";
-        }
-        json+="]";
-        json=json.replace("},]","}]");
-        Map<Object, Object> response = new HashMap<>();
-        response.put("users",json);
+    @RequestMapping( value = "admin/{page}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<User>> GetFoodsPages(@PathVariable(value = "page") Integer page) {
+        List<User> users=userService.getPage(PageRequest.of(page,4)).toList();
         log.info("Post:/api/v1/admin/admin");
-        return ResponseEntity.ok(response);
+
+        if(users.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "admin/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity GetPagesCount(){
+
+        int pagesCount = userService.getPage(PageRequest.of(1,4)).getTotalPages();
+        Map<Object, Object> response = new HashMap<>();
+        response.put("count", pagesCount);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "patient")
     public ResponseEntity PostPatient(@RequestBody AdminUserDto requestDto) {
@@ -129,20 +137,7 @@ public class AdminRestControllerV1 {
         log.info("PostDoctor:/api/v1/admin/doctor");
         return ResponseEntity.ok(response);
     }
-    @GetMapping(value = "admin")
-    public String Get( Model model,
-     @PageableDefault(sort = {"id"},direction = Sort.Direction.DESC)Pageable pageable) {
-        Page<User> page;
 
-                page=userCrudRepository.findAll(pageable);
-
-     //   System.out.println("-------------------");
-
-      //  System.out.println("-------------------");
-        model.addAttribute("page",page);
-        Map<Object, Object> response = new HashMap<>();
-        return "Admin";
-    }
 
     @RequestMapping(value = "delUser/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeleteUser(@PathVariable(value = "id") Long id){
@@ -206,7 +201,7 @@ public class AdminRestControllerV1 {
             }
 
         }catch (Exception e){
-            response.put("userError", "user not found or user include on doctor or patient");
+            response.put("userError", "user not found or user include on doctor or patient or check email");
         }
         log.info("RegiserDoctor:/api/v1/admin/addDoctor");
         return new ResponseEntity<>(response, HttpStatus.CREATED);

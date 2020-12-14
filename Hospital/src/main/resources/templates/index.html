@@ -13,7 +13,7 @@
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
     <a href="/" >Main</a>
-    <a href="/" onclick="LogOut()">LogOut</a>
+    <a  onclick="LogOut()">LogOut</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 
@@ -30,11 +30,8 @@
 //https://inter-net.pro/javascript/sort-table
 <script type="text/javascript">
     function LogOut(){
-        localStorage.setItem('token', 0);
-        localStorage.setItem('email', 0);
-        localStorage.setItem('Role_id',0);
-        localStorage.setItem('User_id',0);
-        localStorage.setItem('who',0);
+        localStorage.clear();
+        document.location.href = "/aut";
         document.getElementById('doc_or_patient').innerHTML="";
     }
     console.log(localStorage.getItem('Role_id'));
@@ -53,3 +50,9 @@
 </script>
 </body>
 </html>
+
+<!--document.location.href = "/login";-->
+logout = () => {
+localStorage.clear();
+document.location.href = "/login";
+}

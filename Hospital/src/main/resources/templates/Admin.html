@@ -16,8 +16,10 @@
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
     <a href="/">Main</a>
+    <a  onclick="LogOut()">LogOut</a>
     <div id="admin_aut"></div>
     <h1 class="HeaderText">Hospital</h1>
+
 </div>
 
 <div class="content">
@@ -27,30 +29,43 @@
 <div id="result_for_login"></div>
 <div id="result_for_delete"></div>
 <div class="footer">
+    <div id="content" style="width: 50%;margin: 40px auto 10px;">
+    </div>
+<div id="pagination"></div>
     <p>Footer</p>
 
 </div>
 <script type="text/javascript">
-    Send();
-    async function Send() {
+    Send(0);
+    function LogOut(){
+        localStorage.clear();
+        document.location.href = "/aut";
+        document.getElementById('result_for_login').innerHTML="";
         document.getElementById('result_for_delete').innerHTML="";
-        let response = await fetch("/api/v1/admin/admin",
+        document.getElementById('admin_aut').innerHTML="";
+    }
+    async function Send(page) {
+
+        document.getElementById('result_for_delete').innerHTML="";
+        let response = await fetch("/api/v1/admin/admin/"+page,
             {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-                body: JSON.stringify({
-                    User_id:  localStorage.getItem('User_id'),
-                    Role_id: localStorage.getItem('Role_id')
-                })
+                method: 'GET',
+                headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),'Content-Type': 'application/json', 'Accept': 'application/json'}
+
             });
         let data = await response.json();
         document.getElementById('result_for_login').innerHTML = "";
         if(response.status === 200)
         {
-            console.log(data.users);
-            console.log(localStorage.getItem('token'));
-            console.log(localStorage.getItem('Role_id'));
-            document.getElementById('result_for_login').innerHTML =data.users;
+            table_result="<ul>";
+            for(i=0;i<data.length;i++){
+          table_result+=  "<li>";
+          table_result+="id->"+data[i].id+"   |   status->"+data[i].status+"   |   firstName->"+data[i].firstName+"   |   lastName->"+data[i].lastName+
+                  "   |   email->"+data[i].email+"   |   roles->"+data[i].roles[0].name;
+            table_result+=  "</li>";
+            }
+            table_result+="</ul>";
+            document.getElementById('result_for_login').innerHTML =table_result;
             document.getElementById('admin_aut').innerHTML="<a href='/admin/admin/addDoctor'>Doctor</a>"
                 +"<a href='/admin/admin/addPatient'>Patient</a>"
         }
@@ -63,7 +78,7 @@
         document.getElementById('result_for_delete').innerHTML="";
         let response = await fetch('/api/v1/admin/delUser/'+document.getElementById('id_user').value, {
             method: 'DELETE',
-            headers: {
+            headers:  {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             }
         });
@@ -75,6 +90,10 @@
         }
         else
         {
+            if(response.status === 403)
+            {
+                document.getElementById('result_for_delete').innerHTML ="Error:no rights";
+            }
             document.getElementById('result_for_delete').innerHTML= "Delete:"+data.userError+"<br>";
 
         }
@@ -84,7 +103,7 @@
         document.getElementById('result_for_delete').innerHTML="";
         let response = await fetch('/api/v1/admin/delreception', {
             method: 'DELETE',
-            headers: {
+            headers:  {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             }
         });
@@ -96,10 +115,42 @@
         }
         else
         {
+            if(response.status === 403)
+            {
+                document.getElementById('result_for_delete').innerHTML ="Error:no rights";
+            }
             document.getElementById('result_for_delete').innerHTML= "Delete reception:"+data.userError+"<br>";
 
         }
     }
+   PaginationButtons();
+   async  function PaginationButtons()
+   {
+       console.log(localStorage.getItem('token'));
+       let response = await fetch("/api/v1/admin/admin/pages",
+           {
+               method: 'GET',
+               headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),'Content-Type': 'application/json', 'Accept': 'application/json'}
+           });
+       let data = await response.json();
+       let count = data.count;
+
+       if(count > 1){
+           for(let i=0; i < count; i++)
+           {
+               let button = document.createElement('button');
+               button.setAttribute('class', 'page btn btn-sm btn-info');
+               button.value = i;
+               button.innerHTML = i + 1;
+               button.onclick = () =>
+               {
+                   Send(button.value);
+               }
+               document.querySelector('#pagination').appendChild(button);
+           }
+       }
+
+   }
 </script>
 </body>
 </html>

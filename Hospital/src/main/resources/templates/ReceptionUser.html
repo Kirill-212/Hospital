@@ -13,6 +13,7 @@
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
     <a href="/" >Main</a>
+    <a  onclick="LogOut()">LogOut</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
@@ -41,13 +42,17 @@
 </div>
 <script type="text/javascript">
     getAll();
+    function LogOut(){
+        localStorage.clear();
+        document.location.href = "/aut";
+    }
     async function getAll() {
         document.getElementById('result_all_doctor').innerHTML="";
         document.getElementById('result').innerHTML = "";
         let response = await fetch("/api/v1/users/allDoctor",
             {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),'Content-Type': 'application/json', 'Accept': 'application/json'},
                 body: JSON.stringify({
                     User_id:  localStorage.getItem('User_id'),
                     Role_id: localStorage.getItem('Role_id')
@@ -89,7 +94,7 @@
         let response = await fetch("/api/v1/users/patient/"+localStorage.getItem('id_patient'),
             {
                 method: 'GET',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}
+                headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),'Content-Type': 'application/json', 'Accept': 'application/json'}
             });
         let data = await response.json();
         document.getElementById('result_all_reception_for_patient').innerHTML = "";
@@ -141,7 +146,7 @@
         console.log(send);
         let response = await fetch('/api/v1/users/addReception', {
             method: 'POST',
-            headers: {
+            headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             },
             body: JSON.stringify(send)
@@ -159,6 +164,10 @@
                 document.getElementById('result').innerHTML ="Add:"+ data.userError+"<br>";
             }
             else{
+                if(response.status === 403)
+                {
+                    document.getElementById('result').innerHTML ="Error:no rights";
+                }
                 data.errors.forEach(err =>
                 {document.getElementById('result').innerHTML="Add:";
                     document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";

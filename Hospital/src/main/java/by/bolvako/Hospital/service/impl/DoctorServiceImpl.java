@@ -4,10 +4,7 @@ import by.bolvako.Hospital.model.Doctor;
 import by.bolvako.Hospital.model.Role;
 import by.bolvako.Hospital.model.Status;
 import by.bolvako.Hospital.model.User;
-import by.bolvako.Hospital.repository.DoctorRepository;
-import by.bolvako.Hospital.repository.ReceptionCrudRepository;
-import by.bolvako.Hospital.repository.ReceptionRepository;
-import by.bolvako.Hospital.repository.UserRepository;
+import by.bolvako.Hospital.repository.*;
 import by.bolvako.Hospital.service.DoctorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +20,25 @@ public class DoctorServiceImpl  implements DoctorService {
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(DoctorServiceImpl.class);
     private DoctorRepository doctorRepository;
+    private RoleRepository roleRepository;
     private UserRepository userRepository;
     private ReceptionRepository receptionRepository;
     private ReceptionCrudRepository receptionCrudRepository;
     @Autowired
-    public DoctorServiceImpl(ReceptionCrudRepository receptionCrudRepository,ReceptionRepository receptionRepository,DoctorRepository doctorRepository,UserRepository userRepository){
+    public DoctorServiceImpl(RoleRepository roleRepository,ReceptionCrudRepository receptionCrudRepository,ReceptionRepository receptionRepository,DoctorRepository doctorRepository,UserRepository userRepository){
         this.doctorRepository=doctorRepository;
         this.userRepository=userRepository;
         this.receptionRepository=receptionRepository;
         this.receptionCrudRepository=receptionCrudRepository;
+        this.roleRepository=roleRepository;
     }
 
     @Override
     public Doctor register(Doctor doctor) {
+        List<Role> userRoles = new ArrayList<>();
+        userRoles.add(roleRepository.findByName("ROLE_DOCTOR"));
 
-
+        doctor.getUser().setRoles(userRoles);
         Doctor registeredDoctor = doctorRepository.save(doctor);
 
         log.info("IN register - Doctor: {} successfully registered", registeredDoctor);

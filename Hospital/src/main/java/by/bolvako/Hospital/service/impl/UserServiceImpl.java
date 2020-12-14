@@ -8,6 +8,8 @@ import by.bolvako.Hospital.repository.UserRepository;
 import by.bolvako.Hospital.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +61,11 @@ public class UserServiceImpl implements UserService {
         List<User> result = userRepository.findAll();
         log.info("IN getAll - {} users found", result.size());
         return result;
+    }
+
+    @Override
+    public Page<User> getPage(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override

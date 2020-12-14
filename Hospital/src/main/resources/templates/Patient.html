@@ -14,6 +14,7 @@
     <a href="/aut">Autorisation</a>
     <a href="/" >Main</a>
     <a href="/admin">Back</a>
+    <a  onclick="LogOut()">LogOut</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
@@ -25,8 +26,8 @@
     <b>Home address:</b>
     <input type="text" placeholder="Input home address" id="Home_adress">
     <hr>
-    <b>Passport:</b>
-    <input type="text" placeholder="Input passport" id="Passport">
+    <b>Phone number:</b>
+    <input type="text" placeholder="Input Phone number" id="Passport">
     <hr>
 
     <button onclick="Send()">Add patient</button>
@@ -43,8 +44,8 @@
     <b>New home address:</b>
     <input type="text" placeholder="Input home address" id="Home_adress_patient">
     <hr>
-    <b>New passport:</b>
-    <input type="text" placeholder="Input new passport" id="Passport_patient">
+    <b>New Phone number:</b>
+    <input type="text" placeholder="Input new Phone number" id="Passport_patient">
     <hr>
     <button onclick="Update()">Update patient</button>
 </div>
@@ -57,6 +58,10 @@
 </div>
 <script type="text/javascript">
     getAll();
+    function LogOut(){
+        localStorage.clear();
+        document.location.href = "/aut";
+    }
     async function getAll() {
         document.getElementById('result_for_delete').innerHTML="";
         document.getElementById('result_for_update').innerHTML="";
@@ -65,7 +70,7 @@
         let response = await fetch("/api/v1/admin/patient",
             {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),'Content-Type': 'application/json', 'Accept': 'application/json'},
                 body: JSON.stringify({
                     User_id:  localStorage.getItem('User_id'),
                     Role_id: localStorage.getItem('Role_id')
@@ -81,7 +86,7 @@
             table_result =
                 "<tr><th onclick='sortTable(0)'>Id patient</th>" +
                 "<th onclick='sortTable(1)'>Home address</th>" +
-                "<th onclick='sortTable(2)'>Passport</th>" +
+                "<th onclick='sortTable(2)'>Phone number</th>" +
                 "<th onclick='sortTable(3)'>Id user</th></tr>";
             for (let i = 0; i < json.length; i++) {
                 table_result += "<tr>";
@@ -110,7 +115,7 @@
         console.log(send);
         let response = await fetch('/api/v1/admin/updatePatient', {
             method: 'POST',
-            headers: {
+            headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             },
             body: JSON.stringify(send)
@@ -127,6 +132,10 @@
                 document.getElementById('result_for_update').innerHTML = "Update:"+data.userError+"<br>";
             }
             else{
+                if(response.status === 403)
+                {
+                    document.getElementById('result_for_update').innerHTML ="Error:no rights";
+                }
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result_for_update').innerHTML= "Update:";
@@ -148,7 +157,7 @@
         console.log(send);
         let response = await fetch('/api/v1/admin/delPatient', {
             method: 'POST',
-            headers: {
+            headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             },
             body: JSON.stringify(send)
@@ -165,6 +174,10 @@
                 document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError+"<br>";
             }
             else{
+                if(response.status === 403)
+                {
+                    document.getElementById('result_for_delete').innerHTML ="Error:no rights";
+                }
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result_for_delete').innerHTML="Delete:";
@@ -185,13 +198,13 @@
         console.log(send);
         let response = await fetch('/api/v1/admin/addPatient', {
             method: 'POST',
-            headers: {
+            headers: {'Authorization': 'Bearer_' + localStorage.getItem('token'),
                 'Content-Type': 'application/json', 'Accept': 'application/json'
             },
             body: JSON.stringify(send)
         });
         let data = await response.json();
-        if(response.status === 201)
+        if(response.status === 200)
         {
             document.getElementById('result').innerHTML ="Add:"+ data.userError;
             //  window.location.href = '/login';
@@ -202,11 +215,16 @@
                 document.getElementById('result').innerHTML ="Add:"+ data.userError+"<br>";
             }
             else{
+                if(response.status === 403)
+                {
+                    document.getElementById('result').innerHTML ="Error:no rights";
+                }
                 data.errors.forEach(err =>
                 {document.getElementById('result').innerHTML="Add:";
                     document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";
                 });
             }
+
         }
         document.getElementById('id').value="";
         document.getElementById('Passport').value="";

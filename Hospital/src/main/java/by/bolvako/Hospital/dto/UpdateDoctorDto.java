@@ -4,6 +4,7 @@ import by.bolvako.Hospital.model.Doctor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateDoctorDto {
@@ -14,8 +15,8 @@ public class UpdateDoctorDto {
     @NotNull(message = "specialty cannot be null")
     private String specialty;
 
-    @Size(min = 7, max = 8, message = "The Passport must be equal or greater than 7 characters and less than 8 characters")
-    @NotNull(message = "Passport cannot be null")
+
+    @NotNull(message = "phone number cannot be null")
     private  String Passport;
 
     @Override

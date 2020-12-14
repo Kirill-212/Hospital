@@ -12,6 +12,7 @@
 <div class="topnav">
     <a href="/">Back</a>
     <a href="/aut">Autorisation</a>
+    <a  onclick="LogOut()">LogOut</a>
     <h1 class="HeaderText">Hospital</h1>
 </div>
 <div class="contentreg">
@@ -31,6 +32,10 @@
 
 </div>
 <script type="text/javascript">
+    function LogOut(){
+        localStorage.clear();
+        document.location.href = "/aut";
+    }
     async function Send() {
         let send={
             email:document.getElementById('email').value,
