@@ -43,7 +43,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -141,7 +141,7 @@
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result_doctor').innerHTML= "Update:";
-                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_doctor').innerHTML+=err.message;
                 });
             }
 
@@ -182,7 +182,7 @@
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result_doctor').innerHTML= "Del:";
-                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_doctor').innerHTML+=err.message;
                 });
             }
 
@@ -224,7 +224,7 @@
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result_doctor').innerHTML= "Add:";
-                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_doctor').innerHTML+=err.message;
                 });
             }
         }

@@ -75,7 +75,7 @@ public class AdminRestControllerV1 {
     @RequestMapping( value = "admin/{page}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> GetFoodsPages(@PathVariable(value = "page") Integer page) {
         List<User> users=userService.getPage(PageRequest.of(page,4)).toList();
-        log.info("Post:/api/v1/admin/admin");
+        log.info("Post:/api/v1/admin/admin/{page}");
 
         if(users.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -90,7 +90,7 @@ public class AdminRestControllerV1 {
         int pagesCount = userService.getPage(PageRequest.of(1,4)).getTotalPages();
         Map<Object, Object> response = new HashMap<>();
         response.put("count", pagesCount);
-
+        log.info("GetPagesCount:/api/v1/admin/admin/pages");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "patient")
@@ -112,6 +112,7 @@ public class AdminRestControllerV1 {
         Map<Object, Object> response = new HashMap<>();
         response.put("patients", json.toString());
         log.info("PostPatient:/api/v1/admin/patient");
+
         return ResponseEntity.ok(response);
     }
     @PostMapping(value = "doctor")

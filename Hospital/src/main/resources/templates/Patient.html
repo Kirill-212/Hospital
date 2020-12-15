@@ -132,7 +132,7 @@
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result').innerHTML= "Update:";
-                    document.getElementById('result').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result').innerHTML+=err.message;
                 });
             }
         }
@@ -170,7 +170,7 @@
                 data.errors.forEach(err =>
                 {
                     document.getElementById('result').innerHTML="Delete:";
-                    document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";
+                    document.getElementById('result').innerHTML+=err.message+"<br>";
                 });
             }
 
@@ -208,7 +208,7 @@
                 }
                 data.errors.forEach(err =>
                 {document.getElementById('result').innerHTML="Add:";
-                    document.getElementById('result').innerHTML+=err.field+':'+err.message+"<br>";
+                    document.getElementById('result').innerHTML+=err.message+"<br>";
                 });
             }
         }
