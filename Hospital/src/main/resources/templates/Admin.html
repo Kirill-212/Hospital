@@ -6,34 +6,28 @@
     <link rel="stylesheet" type="text/css" href ="style.css"/>
 </head>
 <body>
-<input type="text" placeholder="Input id" id="id_user">
-<hr>
-<button onclick="Del_Reception()">Delete null reception</button>
-<button onclick="Del()">Delete</button>
-<button onclick="Send()">Refresh</button>
-
 <div class="topnav">
     <a href="/reg">Register</a>
     <a href="/aut">Autorisation</a>
     <a href="/">Main</a>
     <a  onclick="LogOut()">LogOut</a>
     <div id="admin_aut"></div>
+    <button onclick="Send(0)" class="button button5">Refresh</button>
+    <button onclick="Del_Reception()" class="button button5">Delete null reception</button>
+    <button onclick="Del()" class="button button5">Delete</button>
     <h1 class="HeaderText">Hospital</h1>
 
 </div>
 
-<div class="content">
-    <h2>CSS Template</h2>
-    <p>A topnav, content and a footer.</p>
+<div class="content2">
+    <b >Id user:</b><input type="text" placeholder="Input id for delete" id="id_user">
+    <hr>
+    <div id="result_for_login"></div>
+    <div id="pagination"></div>
+    <div id="result_for_delete"></div>
 </div>
-<div id="result_for_login"></div>
-<div id="result_for_delete"></div>
 <div class="footer">
-    <div id="content" style="width: 50%;margin: 40px auto 10px;">
-    </div>
-<div id="pagination"></div>
-    <p>Footer</p>
-
+    <p>buy a footer from the link :<a href="https://vk.com/kirysha.bolvako">buy</a></p>
 </div>
 <script type="text/javascript">
     Send(0);
@@ -86,16 +80,18 @@
         if(response.status === 200)
         {
             document.getElementById('result_for_delete').innerHTML ="Delete:"+ data.userError;
-            //  window.location.href = '/login';
         }
         else
         {
             if(response.status === 403)
             {
-                document.getElementById('result_for_delete').innerHTML ="Error:no rights";
+            document.getElementById('result_for_delete').innerHTML ="Error:no rights";
+            }
+         else  if(response.status === 404)
+            {
+                document.getElementById('result_for_delete').innerHTML ="Error:not input user id";
             }
             document.getElementById('result_for_delete').innerHTML= "Delete:"+data.userError+"<br>";
-
         }
         document.getElementById('id_user').value="";
     }
@@ -111,7 +107,6 @@
         if(response.status === 200)
         {
             document.getElementById('result_for_delete').innerHTML ="Delete reception:"+ data.userError;
-            //  window.location.href = '/login';
         }
         else
         {
@@ -120,7 +115,6 @@
                 document.getElementById('result_for_delete').innerHTML ="Error:no rights";
             }
             document.getElementById('result_for_delete').innerHTML= "Delete reception:"+data.userError+"<br>";
-
         }
     }
    PaginationButtons();

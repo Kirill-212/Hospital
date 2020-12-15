@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>admin Doctor</title>
-
     <link rel="stylesheet" type="text/css" href ="http://localhost:8075/style.css"/>
-
 </head>
 <body>
 
@@ -15,11 +13,11 @@
     <a href="/" >Main</a>
     <a href="/admin">Back</a>
     <a  onclick="LogOut()">LogOut</a>
+    <button onclick="getAll()" class="button button5">refresh</button>
     <h1 class="HeaderText">Hospital</h1>
 </div>
-<div class="contentreg">
-    <button onclick="getAll()">refresh</button>
-    <hr>
+<div class="content3">
+    <div  id="result_doctor"> </div>
     <b>Id user:</b>
     <input type="text" placeholder="Input id user" id="id" >
     <hr>
@@ -32,15 +30,12 @@
     <b>Specialty:</b>
     <input type="text" placeholder="Input specialty" id="Specialty">
     <hr>
-    <button onclick="Send()">Add doctor</button>
-    <hr>
-    <hr>
+    <button onclick="Send()" class="button button5">Add doctor</button>
     <hr>
     <b>Del for id Doctor:</b>
     <input type="text" placeholder="Input id doctor" id="id_del">
     <hr>
-    <button onclick="Del()">Delete</button>
-    <hr>
+    <button onclick="Del()" class="button button5">Delete</button>
     <hr>
     <b>Id doctor:</b>
     <input type="text" placeholder="Input id doctor" id="id_doctor">
@@ -54,34 +49,20 @@
     <b>New specialty:</b>
     <input type="text" placeholder="Input specialty" id="Specialty_doctor">
     <hr>
-    <button onclick="Update()">Update</button>
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <hr>
-    <table  id="result_for_login_doctor"> </table>
+    <button onclick="Update()" class="button button5">Update</button>
 </div>
 
 <div class="footer">
-    <div  id="result_doctor"> </div>
-    <div  id="result_for_delete_doctor"> </div>
-    <div  id="result_for_update_doctor"> </div>
-
+    <table  id="result_for_login_doctor"> </table>
 </div>
 <script type="text/javascript">
     getAll();
     function LogOut(){
         localStorage.clear();
         document.location.href = "/aut";
-        document.getElementById('result_for_delete_doctor').innerHTML="";
-        document.getElementById('result_for_update_doctor').innerHTML="";
-        document.getElementById('result_for_login_doctor').innerHTML="";
-        document.getElementById('result_doctor').innerHTML = "";
     }
     async function getAll() {
-        document.getElementById('result_for_delete_doctor').innerHTML="";
-        document.getElementById('result_for_update_doctor').innerHTML="";
+
         document.getElementById('result_for_login_doctor').innerHTML="";
         document.getElementById('result_doctor').innerHTML = "";
         let response = await fetch("/api/v1/admin/doctor",
@@ -127,7 +108,7 @@
 
 
     async function Update() {
-        document.getElementById('result_for_update_doctor').innerHTML="";
+
         let send={
             id:document.getElementById('id_doctor').value,
             passport:document.getElementById('Passport_doctor').value,
@@ -145,23 +126,22 @@
         let data = await response.json();
         if(response.status === 200)
         {
-            document.getElementById('result_for_update_doctor').innerHTML ="Update:"+ data.userError;
-            //  window.location.href = '/login';
+            document.getElementById('result_doctor').innerHTML ="Update:"+ data.userError;
         }
         else
         {
             if(typeof  data.userError != "undefined"){
-                document.getElementById('result_for_update_doctor').innerHTML = "Update:"+data.userError+"<br>";
+                document.getElementById('result_doctor').innerHTML = "Update:"+data.userError+"<br>";
             }
             else{
                 if(response.status === 403)
                 {
-                    document.getElementById('result_for_update_doctor').innerHTML ="Error:no rights";
+                    document.getElementById('result_doctor').innerHTML ="Error:no rights";
                 }
                 data.errors.forEach(err =>
                 {
-                    document.getElementById('result_for_update_doctor').innerHTML= "Update:";
-                    document.getElementById('result_for_update_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_doctor').innerHTML= "Update:";
+                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
                 });
             }
 
@@ -172,7 +152,7 @@
         document.getElementById('Specialty_doctor').value="";
     }
     async function Del() {
-        document.getElementById('result_for_delete_doctor').innerHTML="";
+
         let send={
             id:document.getElementById('id_del').value
         };
@@ -187,23 +167,22 @@
         let data = await response.json();
         if(response.status === 200)
         {
-            document.getElementById('result_for_delete_doctor').innerHTML ="Del:"+ data.userError;
-            //  window.location.href = '/login';
+            document.getElementById('result_doctor').innerHTML ="Del:"+ data.userError;
         }
         else
         {
             if(typeof  data.userError != "undefined"){
-                document.getElementById('result_for_delete_doctor').innerHTML = "Del:"+data.userError+"<br>";
+                document.getElementById('result_doctor').innerHTML = "Del:"+data.userError+"<br>";
             }
             else{
                 if(response.status === 403)
                 {
-                    document.getElementById('result_for_delete_doctor').innerHTML ="Error:no rights";
+                    document.getElementById('result_doctor').innerHTML ="Error:no rights";
                 }
                 data.errors.forEach(err =>
                 {
-                    document.getElementById('result_for_delete_doctor').innerHTML= "Del:";
-                    document.getElementById('result_for_delete_doctor').innerHTML+=err.field+':'+err.message;
+                    document.getElementById('result_doctor').innerHTML= "Del:";
+                    document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
                 });
             }
 
@@ -212,7 +191,7 @@
     }
 
     async function Send() {
-        document.getElementById('result_doctor').innerHTML="";
+
         let send={
             id:document.getElementById('id').value,
             passport:document.getElementById('Passport').value,
@@ -231,7 +210,6 @@
         if(response.status === 201)
         {
             document.getElementById('result_doctor').innerHTML ="Add:"+ data.userError;
-            //  window.location.href = '/login';
         }
         else
         {
@@ -249,7 +227,6 @@
                     document.getElementById('result_doctor').innerHTML+=err.field+':'+err.message;
                 });
             }
-
         }
         document.getElementById('id').value="";
         document.getElementById('Passport').value="";
@@ -314,9 +291,3 @@
 </script>
 </body>
 </html>
-
-<!--document.location.href = "/login";-->
-<!--logout = () => {-->
-<!--localStorage.clear();-->
-<!--document.location.href = "/login";-->
-<!--}-->

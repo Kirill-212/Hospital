@@ -6,12 +6,30 @@
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
+   background-color: #f1f1f1;
 }
 
 /* Style the top navigation bar */
 .topnav {
     overflow: hidden;
     background-color: #333;
+}
+p {
+    text-indent: 50px;
+}
+/* Container for flexboxes */
+.row {
+    display: -webkit-flex;
+    display: flex;
+}
+
+/* Create three equal columns that sits next to each other */
+.column {
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    padding: 10px;
+    height: 300px; /* Should be removed. Only for demonstration */
 }
 .HeaderText{
     color: #dddddd;
@@ -43,11 +61,45 @@ body {
 
 /* Style the content */
 .content {
+    text-align: center;
     background-color: #ddd;
     padding: 10px;
-    height: 200px; /* Should be removed. Only for demonstration */
+    height: 1000px; /* Should be removed. Only for demonstration */
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
 }
-
+.content1 {
+    text-align: left;
+    background-color: #ddd;
+    padding: 10px;
+    height: 800px; /* Should be removed. Only for demonstration */
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.content3 {
+    text-align: left;
+    background-color: #ddd;
+    padding: 10px;
+    height: 1000px; /* Should be removed. Only for demonstration */
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.content2 {
+    text-align:center;
+    background-color: #ddd;
+    padding: 10px;
+    height: 900px; /* Should be removed. Only for demonstration */
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.content4 {
+    text-align:left;
+    background-color: #ddd;
+    padding: 10px;
+    height: 500px; /* Should be removed. Only for demonstration */
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
 .contentreg {
     height: 500px;
     background-color: #ddd;
@@ -82,3 +134,78 @@ td {
 tr:nth-child(even) {
     background-color: #f2f2f2
 }
+.button {
+    background-color: green; /* Green */
+    border: none;
+    color: white;
+    padding: 13px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+.button5 {
+    background-color: white;
+    color: black;
+    border: 2px solid #555555;
+}
+b{
+    padding: 10px;
+    color: black;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+#result{
+    padding: 10px;
+    color: black;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+#result_for_login{
+    padding: 10px;
+    color: black;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+#result_doctor{
+    padding: 10px;
+    color: black;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+input {
+    width: 70%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+input:focus {
+    background-color: lightblue;
+}
+.button5:hover {
+    background-color: #555555;
+    color: white;
+}
+
+#result_for_delete{
+    height: 80px;
+    padding: 10px;
+    color: black;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+ul{
+    height: 250px;
+}
+li {
+
+    padding: 20px;
+    list-style-type: circle;
+}
+

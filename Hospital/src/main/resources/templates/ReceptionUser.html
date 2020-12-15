@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Patient</title>
+    <title>admin Patient</title>
 
     <link rel="stylesheet" type="text/css" href ="http://localhost:8075/style.css"/>
 
@@ -14,11 +14,11 @@
     <a href="/aut">Autorisation</a>
     <a href="/" >Main</a>
     <a  onclick="LogOut()">LogOut</a>
+    <button onclick="getAll()" class="button button5">refresh</button>
     <h1 class="HeaderText">Hospital</h1>
 </div>
-<div class="contentreg">
-    <button onclick="getAll()">refresh</button>
-    <hr>
+<div class="content4">
+    <div  id="result"> </div>
     <b>Id doctor:</b>
     <input type="text" placeholder="Input id doctor" id="id_doctor_reception" >
     <hr>
@@ -31,14 +31,11 @@
     <b>Symptoms:</b>
     <input type="text" placeholder="Input symptoms" id="symptoms_reception">
     <hr>
-    <button onclick="Send()">Add reception</button>
-
+    <button onclick="Send()" class="button button5">Add reception</button>
 </div>
-
 <div class="footer">
-    <table id="result_all_doctor"></table>
     <table id="result_all_reception_for_patient"></table>
-    <div  id="result"> </div>
+    <table id="result_all_doctor"></table>
 </div>
 <script type="text/javascript">
     getAll();
@@ -135,7 +132,6 @@
     }
 
     async function Send() {
-        document.getElementById('result').innerHTML = "";
         let send={
             symptoms:document.getElementById('symptoms_reception').value,
             id_doctor:document.getElementById('id_doctor_reception').value,

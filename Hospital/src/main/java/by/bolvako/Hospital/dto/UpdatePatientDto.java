@@ -13,7 +13,8 @@ public class UpdatePatientDto {
     private  Long id;
     @NotNull(message = "Home address cannot be null")
     private String Homeadress;
-
+    @Pattern(regexp = "^\\d{11}$",
+            message = "phone number is not valid")
     @NotNull(message = "phone number cannot be null")
     private String Passport;
 
