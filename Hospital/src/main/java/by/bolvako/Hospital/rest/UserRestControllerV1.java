@@ -10,6 +10,7 @@ import by.bolvako.Hospital.service.ReceptionService;
 import by.bolvako.Hospital.service.UserService;
 
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -62,6 +63,7 @@ public class UserRestControllerV1 {
 //
 //        return new ResponseEntity<>(result, HttpStatus.OK);
 //    }
+@Operation(summary="Add reception")
     @PostMapping("addReception")
     public ResponseEntity RegiserReception(@Valid @RequestBody ReceptionDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -95,6 +97,7 @@ public class UserRestControllerV1 {
         }
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+    @Operation(summary="get doctor")
     @PostMapping("allDoctor")
     public ResponseEntity PostDoctor( @Valid @RequestBody AdminUserDto requestDto, BindingResult errors) {
         List<Doctor> doctors=doctorService.getAll();
@@ -124,7 +127,7 @@ public class UserRestControllerV1 {
 
 
 
-
+    @Operation(summary="Get patient by id")
     @RequestMapping(value = "patient/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForPatient(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();

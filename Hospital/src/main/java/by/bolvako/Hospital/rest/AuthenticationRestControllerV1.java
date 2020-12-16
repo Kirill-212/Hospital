@@ -13,6 +13,7 @@ import by.bolvako.Hospital.service.PatientService;
 import by.bolvako.Hospital.service.RoleService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.validator.EmailValidator;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class AuthenticationRestControllerV1 {
 
 
 
-
+    @Operation(summary="Register")
     @PostMapping("Register")
     public ResponseEntity Regiser(@Valid @RequestBody UserDto requestDto, BindingResult errors) {
         emailValidator.validate(requestDto,errors);
@@ -86,6 +87,7 @@ public class AuthenticationRestControllerV1 {
         }
 
     }
+    @Operation(summary="Login")
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
         String username = requestDto.getEmail();

@@ -12,7 +12,9 @@ import by.bolvako.Hospital.service.PatientService;
 import by.bolvako.Hospital.service.ReceptionService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.service.impl.UserServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,7 +63,7 @@ public class AdminRestControllerV1 {
         this.doctorCrudRepository=doctorCrudRepository;
         this.receptionService=receptionService;
     }
-
+    @Operation(summary="Get user by id")
     @GetMapping(value = "users/{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
         User user = userService.findById(id);
@@ -72,8 +74,9 @@ public class AdminRestControllerV1 {
         log.info("getUserById:/api/v1/admin/users/{id}");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @Operation(summary="Get page")
     @RequestMapping( value = "admin/{page}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> GetFoodsPages(@PathVariable(value = "page") Integer page) {
+    public ResponseEntity<List<User>> GetPages(@PathVariable(value = "page") Integer page) {
         List<User> users=userService.getPage(PageRequest.of(page,4)).toList();
         log.info("Post:/api/v1/admin/admin/{page}");
 
@@ -83,7 +86,7 @@ public class AdminRestControllerV1 {
 
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
-
+    @Operation(summary="Get count page")
     @RequestMapping(value = "admin/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetPagesCount(){
 
@@ -93,6 +96,7 @@ public class AdminRestControllerV1 {
         log.info("GetPagesCount:/api/v1/admin/admin/pages");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @Operation(summary="Get patient")
     @PostMapping(value = "patient")
     public ResponseEntity PostPatient(@RequestBody AdminUserDto requestDto) {
         List<Patient> patient=patientService.getAll();
@@ -115,6 +119,7 @@ public class AdminRestControllerV1 {
 
         return ResponseEntity.ok(response);
     }
+    @Operation(summary="Get doctor")
     @PostMapping(value = "doctor")
     public ResponseEntity PostDoctor(@RequestBody AdminUserDto requestDto) {
         List<Doctor> doctors=doctorService.getAll();
@@ -139,7 +144,7 @@ public class AdminRestControllerV1 {
         return ResponseEntity.ok(response);
     }
 
-
+    @Operation(summary="Del user")
     @RequestMapping(value = "delUser/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeleteUser(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
@@ -159,6 +164,7 @@ public class AdminRestControllerV1 {
         log.info("DeleteUser:/api/v1/admin/doctor");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+    @Operation(summary="del null reception")
     @RequestMapping(value = "delreception", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeleteRECEPTION(){
         Map<Object, Object> response = new HashMap<>();
@@ -172,7 +178,7 @@ public class AdminRestControllerV1 {
         log.info("DeleteRECEPTION:/api/v1/admin/delreception");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-
+    @Operation(summary="Add doctor")
     @PostMapping("addDoctor")
     public ResponseEntity RegiserDoctor(@Valid @RequestBody DoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -207,6 +213,7 @@ public class AdminRestControllerV1 {
         log.info("RegiserDoctor:/api/v1/admin/addDoctor");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    @Operation(summary="Del doctor")
     @PostMapping("delDoctor")
     public ResponseEntity DelDoctor(@Valid @RequestBody DeleteDoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -229,6 +236,7 @@ public class AdminRestControllerV1 {
         log.info(" DelDoctor:/api/v1/admin/delDoctor");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+    @Operation(summary="Update doctor")
     @PostMapping("updateDoctor")
     public ResponseEntity UpdateDoctor(@Valid @RequestBody UpdateDoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -250,7 +258,7 @@ public class AdminRestControllerV1 {
         log.info("UpdateDoctor:/api/v1/admin/updateDoctor");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @Operation(summary="Update patient")
     @PostMapping("updatePatient")
     public ResponseEntity UpdatePatient(@Valid @RequestBody UpdatePatientDto requestDto, BindingResult errors) {
     Map<Object, Object> response = new HashMap<>();
@@ -277,6 +285,7 @@ public class AdminRestControllerV1 {
         log.info("UpdatePatient:/api/v1/admin/updatePatient");
     return new ResponseEntity<>(response, HttpStatus.OK);
 }
+    @Operation(summary="Del patient")
     @PostMapping("delPatient")
     public ResponseEntity DelPatient(@Valid @RequestBody DeletePatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -296,7 +305,7 @@ public class AdminRestControllerV1 {
         log.info("DelPatient:/api/v1/admin/delPatient");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @Operation(summary="Add patient")
     @PostMapping("addPatient")
     public ResponseEntity RegiserPatient(@Valid @RequestBody PatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
