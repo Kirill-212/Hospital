@@ -11,6 +11,9 @@ import by.bolvako.Hospital.service.UserService;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -47,6 +50,10 @@ public class DoctorRestControllerV1 {
         this.receptionCrudRepository=receptionCrudRepository;
     }
     @Operation(summary="Get by doctor id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "get all reception for doctor",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping(value = "doctor/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForDoctor(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
@@ -97,6 +104,10 @@ public class DoctorRestControllerV1 {
 
     }
     @Operation(summary="Update reception")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "update reception",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("updateReception")
     public ResponseEntity UpdateReception(@Valid @RequestBody UpdateReceptionDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -123,6 +134,10 @@ public class DoctorRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     @Operation(summary="Search patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "search patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("Search/patient")
     public ResponseEntity SearchReception(@Valid @RequestBody SearchPatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();

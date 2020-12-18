@@ -13,10 +13,14 @@ import by.bolvako.Hospital.service.ReceptionService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,14 +43,13 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/v1/admin/")
 public class AdminRestControllerV1 {
+
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(AdminRestControllerV1.class);
     private final UserService userService;
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final ReceptionService receptionService;
-    private final UserCrudRepository userCrudRepository;
-    private final UserRepository userRepository;
     private final PatientCrudRepository patientCrudRepository;
     private final DoctorCrudRepository doctorCrudRepository;
     @Autowired
@@ -55,8 +58,6 @@ public class AdminRestControllerV1 {
     public AdminRestControllerV1(UserRepository userRepository,PatientService patientService,ReceptionService receptionService,PatientCrudRepository patientCrudRepository,DoctorCrudRepository doctorCrudRepository,
                                  UserService userService,UserCrudRepository userCrudRepository,DoctorService doctorService) {
         this.userService = userService;
-        this.userRepository=userRepository;
-        this.userCrudRepository=userCrudRepository;
         this.doctorService=doctorService;
         this.patientService=patientService;
         this.patientCrudRepository=patientCrudRepository;
@@ -64,6 +65,11 @@ public class AdminRestControllerV1 {
         this.receptionService=receptionService;
     }
     @Operation(summary="Get user by id")
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "get user by id",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @GetMapping(value = "users/{id}")
     public ResponseEntity<AdminUserDto> getUserById(@PathVariable(name = "id") Long id) {
         User user = userService.findById(id);
@@ -74,7 +80,13 @@ public class AdminRestControllerV1 {
         log.info("getUserById:/api/v1/admin/users/{id}");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
     @Operation(summary="Get page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get page",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping( value = "admin/{page}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> GetPages(@PathVariable(value = "page") Integer page) {
         List<User> users=userService.getPage(PageRequest.of(page,4)).toList();
@@ -86,7 +98,13 @@ public class AdminRestControllerV1 {
 
         return new ResponseEntity<>(users,HttpStatus.OK);
     }
+
+
     @Operation(summary="Get count page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get page count",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping(value = "admin/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetPagesCount(){
 
@@ -97,6 +115,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @Operation(summary="Get patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "post patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping(value = "patient")
     public ResponseEntity PostPatient(@RequestBody AdminUserDto requestDto) {
         List<Patient> patient=patientService.getAll();
@@ -120,6 +142,10 @@ public class AdminRestControllerV1 {
         return ResponseEntity.ok(response);
     }
     @Operation(summary="Get doctor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "post doctor",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping(value = "doctor")
     public ResponseEntity PostDoctor(@RequestBody AdminUserDto requestDto) {
         List<Doctor> doctors=doctorService.getAll();
@@ -145,6 +171,10 @@ public class AdminRestControllerV1 {
     }
 
     @Operation(summary="Del user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "delete user",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping(value = "delUser/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeleteUser(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();
@@ -165,6 +195,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @Operation(summary="del null reception")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "delete reception",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping(value = "delreception", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity DeleteRECEPTION(){
         Map<Object, Object> response = new HashMap<>();
@@ -179,6 +213,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @Operation(summary="Add doctor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "add doctor",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("addDoctor")
     public ResponseEntity RegiserDoctor(@Valid @RequestBody DoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -214,6 +252,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
     @Operation(summary="Del doctor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "delete user",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("delDoctor")
     public ResponseEntity DelDoctor(@Valid @RequestBody DeleteDoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -237,6 +279,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @Operation(summary="Update doctor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "update user",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("updateDoctor")
     public ResponseEntity UpdateDoctor(@Valid @RequestBody UpdateDoctorDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -259,6 +305,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @Operation(summary="Update patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "update patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("updatePatient")
     public ResponseEntity UpdatePatient(@Valid @RequestBody UpdatePatientDto requestDto, BindingResult errors) {
     Map<Object, Object> response = new HashMap<>();
@@ -286,6 +336,10 @@ public class AdminRestControllerV1 {
     return new ResponseEntity<>(response, HttpStatus.OK);
 }
     @Operation(summary="Del patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "delete patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("delPatient")
     public ResponseEntity DelPatient(@Valid @RequestBody DeletePatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
@@ -306,6 +360,10 @@ public class AdminRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @Operation(summary="Add patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "add patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("addPatient")
     public ResponseEntity RegiserPatient(@Valid @RequestBody PatientDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();

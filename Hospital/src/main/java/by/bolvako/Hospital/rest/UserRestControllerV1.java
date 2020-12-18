@@ -11,6 +11,9 @@ import by.bolvako.Hospital.service.UserService;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -65,6 +68,10 @@ public class UserRestControllerV1 {
 //    }
 @Operation(summary="Add reception")
     @PostMapping("addReception")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "add reception",
+                content = {@Content(mediaType = "application/json")})
+})
     public ResponseEntity RegiserReception(@Valid @RequestBody ReceptionDto requestDto, BindingResult errors) {
         Map<Object, Object> response = new HashMap<>();
         log.info("RegiserReception:/api/v1/users/addReception");
@@ -98,6 +105,10 @@ public class UserRestControllerV1 {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     @Operation(summary="get doctor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "get doctor",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @PostMapping("allDoctor")
     public ResponseEntity PostDoctor( @Valid @RequestBody AdminUserDto requestDto, BindingResult errors) {
         List<Doctor> doctors=doctorService.getAll();
@@ -128,6 +139,10 @@ public class UserRestControllerV1 {
 
 
     @Operation(summary="Get patient by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "get all reception for patient",
+                    content = {@Content(mediaType = "application/json")})
+    })
     @RequestMapping(value = "patient/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity GetAllReceptionForPatient(@PathVariable(value = "id") Long id){
         Map<Object, Object> response = new HashMap<>();

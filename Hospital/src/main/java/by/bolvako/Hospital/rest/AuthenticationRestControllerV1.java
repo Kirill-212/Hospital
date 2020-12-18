@@ -13,9 +13,15 @@ import by.bolvako.Hospital.service.PatientService;
 import by.bolvako.Hospital.service.RoleService;
 import by.bolvako.Hospital.service.UserService;
 import by.bolvako.Hospital.validator.EmailValidator;
+
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,15 +33,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import javax.naming.AuthenticationException;
 import javax.validation.Valid;
+
 import java.util.HashMap;
 import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/auth/")
 public class AuthenticationRestControllerV1 {
+
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(AuthenticationRestControllerV1.class);
     private final AuthenticationManager authenticationManager;
@@ -46,6 +58,7 @@ public class AuthenticationRestControllerV1 {
     private final RoleService roleService;
     private  final DoctorService doctorService;
     private  final PatientService patientService;
+
     @Autowired
     public AuthenticationRestControllerV1(AuthenticationManager authenticationManager,
                                           JwtTokenProvider jwtTokenProvider, EmailValidator emailValidator,
@@ -67,7 +80,12 @@ public class AuthenticationRestControllerV1 {
 
     @Operation(summary="Register")
     @PostMapping("Register")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Register",
+                    content = {@Content(mediaType = "application/json")})
+    })
     public ResponseEntity Regiser(@Valid @RequestBody UserDto requestDto, BindingResult errors) {
+
         emailValidator.validate(requestDto,errors);
         log.info("Regiser:/api/v1/auth/Register");
         Map<Object, Object> response = new HashMap<>();
@@ -87,9 +105,15 @@ public class AuthenticationRestControllerV1 {
         }
 
     }
-    @Operation(summary="Login")
+    @Operation(summary="Login" )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login",
+                    content = {@Content(mediaType = "application/json")})
+    })
+
     @PostMapping("login")
     public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
+
         String username = requestDto.getEmail();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
         User user = userService.findByEmail(username);

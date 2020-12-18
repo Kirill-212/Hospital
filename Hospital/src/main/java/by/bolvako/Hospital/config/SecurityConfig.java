@@ -44,5 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(DOCTOR_ENDPOINT).hasRole("DOCTOR")
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
+        http.headers()
+                .frameOptions()
+                .sameOrigin()
+                .cacheControl();
     }
 }
